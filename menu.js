@@ -5,10 +5,10 @@ var instructionsButton = new ui.Button(0, 0, 0, 0, "rect", "Instructions")
 // var playButton = new ui.Button(0, 0, 0, 0, "rect", "Play")
 
 function menuTick() {
-    ui.text(canvas.width/2, 100, 100, "Speedwing", {align: "center"})
+    ui.text(canvas.width/2, 100*su, 100*su, "Speedwing", {align: "center"})
 
-    playButton.set(canvas.width/2, canvas.height/2, 200, 100)
-    playButton.textSize = 50
+    playButton.set(canvas.width/2, canvas.height/2, 200*su, 100*su)
+    playButton.textSize = 50*su
     playButton.bgColour = [50, 50, 50, 0.5]
 
     playButton.draw()
@@ -19,8 +19,8 @@ function menuTick() {
         scene = "game"
     }
 
-    instructionsButton.set(canvas.width/2, canvas.height/2+85, 200, 50)
-    instructionsButton.textSize = 35
+    instructionsButton.set(canvas.width/2, canvas.height/2+85*su, 200*su, 50*su)
+    instructionsButton.textSize = 35*su
     instructionsButton.bgColour = [50, 50, 50, 0.5]
 
     instructionsButton.draw()

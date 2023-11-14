@@ -51,14 +51,14 @@ class Particle {
         }
     }
     draw() {
-        var gradient = ctx.createRadialGradient(this.x-camera.x, this.y-camera.y, 0, this.x-camera.x, this.y-camera.y, 5*this.realSize)
+        var gradient = ctx.createRadialGradient((this.x-camera.x)*camera.zoom+canvas.width/2, (this.y-camera.y)*camera.zoom+canvas.height/2, 0, (this.x-camera.x)*camera.zoom+canvas.width/2, (this.y-camera.y)*camera.zoom+canvas.height/2, 5*this.realSize*camera.zoom)
         gradient.addColorStop(this.startP, `rgba(${150 + this.colour[0]}, ${230 + this.colour[1]}, ${255 + this.colour[2]}, 1)`)
         gradient.addColorStop(this.endP, `rgba(${150 + this.colour[0]}, ${230 + this.colour[1]}, ${255 + this.colour[2]}, 0)`)
 
         // if (this.explode < 1) { return }
         ctx.beginPath()
         
-        ctx.arc(this.x - camera.x, this.y - camera.y, 5*this.realSize, 0, 360)
+        ctx.arc((this.x - camera.x)*camera.zoom + canvas.width/2, (this.y - camera.y)*camera.zoom + canvas.height/2, 5*this.realSize*camera.zoom, 0, 360)
         
         ctx.fillStyle = gradient
         ctx.fill()

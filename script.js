@@ -11,7 +11,7 @@ var su = 1
 
 loadMap(0)
 
-var camera = {x: player.x-window.innerWidth/2, y: player.y-window.innerHeight/2}
+var camera = {x: player.x-window.innerWidth/2, y: player.y-window.innerHeight/2, zoom: 1}
 
 var lastTime = 0
 var delta = 0
@@ -42,6 +42,18 @@ function update(timestamp) {
     canvas.height = window.innerHeight
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    var w = window.innerWidth
+	var h = window.innerHeight
+
+	let aspect = w / targetSize.x
+
+	su = aspect
+	if (su > h / targetSize.y) {
+		su = h / targetSize.y
+	}
+
+    camera.zoom = su
 
     if (scene == "game") {
         gameTick()
