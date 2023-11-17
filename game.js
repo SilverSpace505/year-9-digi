@@ -17,6 +17,7 @@ function gameTick() {
 
     camera.x += (player.x - camera.x)*delta*5
     camera.y += (player.y - camera.y)*delta*5
+    camera.zoom *= 1.5
 
     ctx.beginPath()
     let mapI = 0

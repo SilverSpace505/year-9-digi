@@ -18,6 +18,8 @@ var delta = 0
 
 var scene = "menu"
 
+var menuPlayer = new Player(100, 0, 0.25)
+
 ui.textShadow.bottom = "auto"
 
 function update(timestamp) {
@@ -32,7 +34,7 @@ function update(timestamp) {
 
     if (jKeys["KeyE"]) {
         if (scene == "editor") {
-            scene = "menu"
+            scene = "game"
         } else {
             scene = 'editor'
         }
@@ -54,6 +56,37 @@ function update(timestamp) {
 	}
 
     camera.zoom = su
+
+    if (scene != "game" && scene != "editor") {
+        camera.zoom *= 4
+        menuPlayer.velX = 500
+        menuPlayer.dragRot = Math.PI/8
+        menuPlayer.rot = Math.PI/8
+        menuPlayer.draw()
+        camera.x = 0
+        camera.y = 0
+        ctx.beginPath()
+        let mapI = 0
+        let map = [
+            [
+                [175, 500],
+                [175, -25],
+                [125, -75],
+                [-500, -75]
+            ]
+        ]
+        for (let m of map) {
+            ctx.moveTo((m[0][0]-camera.x)*camera.zoom+canvas.width/2, (m[0][1]-camera.y)*camera.zoom+canvas.height/2)
+            for (let i = 1; i < m.length; i++) {
+                ctx.lineTo((m[i][0]-camera.x)*camera.zoom+canvas.width/2, (m[i][1]-camera.y)*camera.zoom+canvas.height/2)
+            }
+            ctx.lineWidth = 10*camera.zoom
+            ctx.strokeStyle = "white"
+            ctx.stroke()
+        
+            mapI++
+        }
+    }
 
     if (scene == "game") {
         gameTick()

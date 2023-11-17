@@ -5,7 +5,7 @@ class Player {
     rot = 0
     velX = 0
     velY = 0
-    speed = 250
+    speed = 500
     rotSpeed = 5
     dragRot = 0
     distance = 0
@@ -19,8 +19,8 @@ class Player {
     update() {
         if (keys["KeyW"] && !finished) {
             timing = true
-            this.velX -= Math.sin(this.rot)*this.speed*delta * ((this.maxDistance - this.rDistance)/25+1)
-            this.velY -= Math.cos(this.rot)*this.speed*delta * ((this.maxDistance - this.rDistance)/25+1)
+            this.velX -= Math.sin(this.rot)*this.speed*delta * ((this.maxDistance - this.rDistance)/50+1)
+            this.velY -= Math.cos(this.rot)*this.speed*delta * ((this.maxDistance - this.rDistance)/50+1)
             for (let i = 0; i < 2; i++) {
                 let rotOff = (Math.random()-0.5)*2 * Math.PI/2
                 particles.push(new Particle(this.x, this.y, 
@@ -268,28 +268,6 @@ class Player {
         ctx.lineWidth = 15*this.size*camera.zoom
         ctx.strokeStyle = "white"
         ctx.stroke()
-
-
-        // ctx.beginPath()
-        // ctx.moveTo(this.x - camera.x, this.y - camera.y)
-        // ctx.lineTo(this.x+Math.sin(this.rot)*this.rDistance - camera.x, this.y+Math.cos(this.rot)*this.rDistance - camera.y)
-        // ctx.closePath()
-        // ctx.strokeStyle = "green"
-        // ctx.stroke()
-
-        // ctx.beginPath()
-        // ctx.moveTo(this.x - camera.x, this.y - camera.y)
-        // ctx.lineTo(this.x+Math.sin(this.rot-Math.PI/4)*this.rDistance - camera.x, this.y+Math.cos(this.rot-Math.PI/4)*this.rDistance - camera.y)
-        // ctx.closePath()
-        // ctx.strokeStyle = "green"
-        // ctx.stroke()
-
-        // ctx.beginPath()
-        // ctx.moveTo(this.x - camera.x, this.y - camera.y)
-        // ctx.lineTo(this.x+Math.sin(this.rot+Math.PI/4)*this.rDistance - camera.x, this.y+Math.cos(this.rot+Math.PI/4)*this.rDistance - camera.y)
-        // ctx.closePath()
-        // ctx.strokeStyle = "green"
-        // ctx.stroke()
         
     }
 }
