@@ -15,13 +15,18 @@ retryButton.hoverMul = 0.925
 function gameTick() {
     player.update()
 
-    camera.x += (player.x - camera.x)*delta*5
-    camera.y += (player.y - camera.y)*delta*5
-    camera.zoom *= 1.5
+    camera.x = lerp(camera.x, player.x+player.velX/5, delta*5)
+    camera.y = lerp(camera.y, player.y+player.velY/5, delta*5)
 
-    ctx.beginPath()
+    zoomT = 1.5 - Math.sqrt(player.velX**2 + player.velY**2)/3000
+
     let mapI = 0
     for (let m of map) {
+        if (m.length <= 0) {
+            mapI++
+            continue
+        }
+        ctx.beginPath()
         ctx.moveTo((m[0][0]-camera.x)*camera.zoom+canvas.width/2, (m[0][1]-camera.y)*camera.zoom+canvas.height/2)
         for (let i = 1; i < m.length; i++) {
             ctx.lineTo((m[i][0]-camera.x)*camera.zoom+canvas.width/2, (m[i][1]-camera.y)*camera.zoom+canvas.height/2)
@@ -30,14 +35,15 @@ function gameTick() {
         ctx.strokeStyle = "white"
         ctx.stroke()
         
-        if (mapI == mapData[mapData.length-1][0]) {
-            ctx.beginPath()
-            let i = mapData[mapData.length-1][1]
-            ctx.moveTo((m[i][0]-camera.x)*camera.zoom+canvas.width/2, (m[i][1]-camera.y)*camera.zoom+canvas.height/2)
-            ctx.lineTo((m[i+1][0]-camera.x)*camera.zoom+canvas.width/2, (m[i+1][1]-camera.y)*camera.zoom+canvas.height/2)
-            ctx.lineWidth = 10*camera.zoom
-            ctx.strokeStyle = "rgb(0, 255, 0)"
-            ctx.stroke()
+        for (let i2 = 0; i2 < m.length; i2++) {
+            if (mapI == mapData[mapData.length-1][0] && (i2 >= mapData[mapData.length-1][1] && i2 < mapData[mapData.length-1][2]) && i2 < m.length-1) {
+                ctx.beginPath()
+                ctx.moveTo((m[i2][0]-camera.x)*camera.zoom+canvas.width/2, (m[i2][1]-camera.y)*camera.zoom+canvas.height/2)
+                ctx.lineTo((m[i2+1][0]-camera.x)*camera.zoom+canvas.width/2, (m[i2+1][1]-camera.y)*camera.zoom+canvas.height/2)
+                ctx.lineWidth = 10*camera.zoom
+                ctx.strokeStyle = "rgba(0, 255, 0)"
+                ctx.stroke()
+            }
         }
        
         mapI++

@@ -16,7 +16,7 @@ function menuTick() {
 
     if (playButton.hovered() && mouse.lclick) {
         playButton.click()
-        scene = "game"
+        scene = "levelselect"
     }
 
     instructionsButton.set(canvas.width/2, canvas.height/2+(75+50+10)*su, 400*su, 100*su)

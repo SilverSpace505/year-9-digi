@@ -11,6 +11,7 @@ class Particle {
     startP = 0
     endP = 0
     colour = [0, 0, 0]
+    animTime = 0
     constructor(x, y, velX, velY, drag) {
         this.x = x
         this.y = y
@@ -51,6 +52,8 @@ class Particle {
         }
     }
     draw() {
+        this.animTime += delta * Math.random()*2
+
         var gradient = ctx.createRadialGradient((this.x-camera.x)*camera.zoom+canvas.width/2, (this.y-camera.y)*camera.zoom+canvas.height/2, 0, (this.x-camera.x)*camera.zoom+canvas.width/2, (this.y-camera.y)*camera.zoom+canvas.height/2, 5*this.realSize*camera.zoom)
         gradient.addColorStop(this.startP, `rgba(${150 + this.colour[0]}, ${230 + this.colour[1]}, ${255 + this.colour[2]}, 1)`)
         gradient.addColorStop(this.endP, `rgba(${150 + this.colour[0]}, ${230 + this.colour[1]}, ${255 + this.colour[2]}, 0)`)
@@ -58,7 +61,7 @@ class Particle {
         // if (this.explode < 1) { return }
         ctx.beginPath()
         
-        ctx.arc((this.x - camera.x)*camera.zoom + canvas.width/2, (this.y - camera.y)*camera.zoom + canvas.height/2, 5*this.realSize*camera.zoom, 0, 360)
+        ctx.arc((this.x - camera.x)*camera.zoom + canvas.width/2, (this.y - camera.y)*camera.zoom + canvas.height/2, 5*this.realSize*(Math.sin(this.animTime*50)*0.5+1)*camera.zoom, 0, 360)
         
         ctx.fillStyle = gradient
         ctx.fill()

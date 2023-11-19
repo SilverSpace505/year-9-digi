@@ -5,7 +5,7 @@ class Player {
     rot = 0
     velX = 0
     velY = 0
-    speed = 500
+    speed = 375
     rotSpeed = 5
     dragRot = 0
     distance = 0
@@ -19,8 +19,8 @@ class Player {
     update() {
         if (keys["KeyW"] && !finished) {
             timing = true
-            this.velX -= Math.sin(this.rot)*this.speed*delta * ((this.maxDistance - this.rDistance)/50+1)
-            this.velY -= Math.cos(this.rot)*this.speed*delta * ((this.maxDistance - this.rDistance)/50+1)
+            this.velX -= Math.sin(this.rot)*this.speed*delta * ((this.maxDistance - this.rDistance)/37.5+1)
+            this.velY -= Math.cos(this.rot)*this.speed*delta * ((this.maxDistance - this.rDistance)/37.5+1)
             for (let i = 0; i < 2; i++) {
                 let rotOff = (Math.random()-0.5)*2 * Math.PI/2
                 particles.push(new Particle(this.x, this.y, 
@@ -63,25 +63,31 @@ class Player {
                 // }
             }
         }
-        this.velX -= (1-0.99)*delta*this.velX * 100
-        this.velY -= (1-0.99)*delta*this.velY * 100
+        this.velX = lerp(this.velX, 0, delta*100*(1-0.99))
+        this.velY = lerp(this.velY, 0, delta*100*(1-0.99))
         
         for (let i = 0; i < 100; i++) {
             this.x += this.velX * delta / 100
             if (this.fixCollision()) {
-                if (this.rDistance > 50) {
-                    this.velX *= -0.25
-                    this.velY *= 0.8
-                    break
-                }
+                this.velX *= 0.9999
+                // if (this.rDistance > 50) {
+                //     this.velX *= -0.25
+                //     this.velY *= 0.8
+                //     break
+                // } else {
+                //     this.velX *= 0.999
+                // }
             }
             this.y += this.velY * delta / 100
-            if (this.fixCollision() && this.rDistance > 50) {
-                if (this.rDistance > 50) {
-                    this.velY *= -0.25
-                    this.velX *= 0.8
-                    break
-                }
+            if (this.fixCollision()) {
+                this.velY *= 0.9999
+                // if (this.rDistance > 50) {
+                //     this.velY *= -0.25
+                //     this.velX *= 0.8
+                //     break
+                // } else {
+                //     this.velY *= 0.999
+                // }
             }
         }
 
@@ -180,7 +186,7 @@ class Player {
                     if (i4 >= m.length) {
                         continue
                     }
-                    if (mapI == mapData[mapData.length-1][0] && i3 == mapData[mapData.length-1][1]) {
+                    if (mapI == mapData[mapData.length-1][0] && i3 >= mapData[mapData.length-1][1] && i3 < mapData[mapData.length-1][2]) {
                         i3++
 
                         if (findIntersection(
@@ -222,7 +228,7 @@ class Player {
         ctx.fillStyle = "blue"
         ctx.fill()
         
-        if ((Math.abs(this.velX)+Math.abs(this.velY))/2 > 25 && !keys["KeyS"]) {
+        if ((Math.abs(this.velX)+Math.abs(this.velY))/2 > 25 && (!keys["KeyS"] || scene != "game")) {
             ctx.beginPath()
         
             ctx.moveTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.rot).y)

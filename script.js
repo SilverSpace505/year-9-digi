@@ -9,9 +9,8 @@ var player = new Player(200, 200, 0.25)
 var targetSize = {x: 1500, y: 1000}
 var su = 1
 
-loadMap(0)
-
 var camera = {x: player.x-window.innerWidth/2, y: player.y-window.innerHeight/2, zoom: 1}
+var zoomT = 4
 
 var lastTime = 0
 var delta = 0
@@ -21,6 +20,8 @@ var scene = "menu"
 var menuPlayer = new Player(100, 0, 0.25)
 
 ui.textShadow.bottom = "auto"
+
+utils.setGlobals()
 
 function update(timestamp) {
     requestAnimationFrame(update)
@@ -32,7 +33,7 @@ function update(timestamp) {
 
     document.body.style.cursor = "default"
 
-    if (jKeys["KeyE"]) {
+    if (jKeys["KeyE"] && !typing) {
         if (scene == "editor") {
             scene = "game"
         } else {
@@ -55,10 +56,11 @@ function update(timestamp) {
 		su = h / targetSize.y
 	}
 
-    camera.zoom = su
+    camera.zoom = lerp(camera.zoom, zoomT*su, delta*10)
 
     if (scene != "game" && scene != "editor") {
-        camera.zoom *= 4
+        zoomT = 4
+        camera.zoom = zoomT*su
         menuPlayer.velX = 500
         menuPlayer.dragRot = Math.PI/8
         menuPlayer.rot = Math.PI/8
@@ -96,6 +98,8 @@ function update(timestamp) {
         menuTick()
     } else if (scene == "instructions") {
         instructionsTick()
+    } else if (scene == "levelselect") {
+        levelSelectTick()
     }
 
     input.updateInput()
