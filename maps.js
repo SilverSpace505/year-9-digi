@@ -54,6 +54,7 @@ function loadMap(index, clearReplay=true) {
     if (bestReplays[index]) {
         ghostReplayInputs = JSON.parse(JSON.stringify(bestReplays[index]))
     }
+    
     ghostReplayT = 0
     ghostPlayer.x = player.x
     ghostPlayer.y = player.y
