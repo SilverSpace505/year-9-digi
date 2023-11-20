@@ -1,4 +1,6 @@
 
+var ghostPlayer = new Player(0, 0, 0.25)
+ghostPlayer.isGhost = true
 
 var time = 0
 var timing = false
@@ -8,6 +10,7 @@ var popupAlpha = 0
 
 var nextLevelButton = new ui.Button(0, 0, 0, 0, "rect", "Next Level")
 var retryButton = new ui.Button(0, 0, 0, 0, "rect", "Retry")
+var replayBestButton = new ui.Button(0, 0, 0, 0, "rect", "Replay Best")
 var menuButton = new ui.Button(0, 0, 0, 0, "rect", "Menu")
 nextLevelButton.hoverMul = 0.925
 retryButton.hoverMul = 0.925
@@ -27,6 +30,10 @@ var gameTicks = 0
 
 var timeInTicks = 0
 
+var ghostReplayT = 0
+var ghostReplayInputs = []
+var ghostInputs = []
+
 function gameTickTrue() {
 
     if (!finished && timing) {
@@ -35,6 +42,26 @@ function gameTickTrue() {
     // if (finished) {
     //     console.log(timeInTicks)
     // }
+
+    let oldInputs = JSON.parse(JSON.stringify(inputs))
+    inputs = JSON.parse(JSON.stringify(ghostInputs))
+
+    if (ghostReplayInputs && ghostReplayInputs.length > 0 && timing && !replay) {
+        ghostReplayT += gameDelta
+        while (ghostReplayInputs.length > 0 && ghostReplayInputs[0][2] < ghostReplayT) {
+            inputs[ghostReplayInputs[0][1]] = ghostReplayInputs[0][0]
+            if (!inputs[ghostReplayInputs[0][1]]) {
+                delete inputs[ghostReplayInputs[0][1]]
+            }
+            ghostReplayInputs.splice(0, 1)
+        }
+    }
+
+    ghostPlayer.update()
+
+    ghostInputs = JSON.parse(JSON.stringify(inputs))
+
+    inputs = oldInputs
     
     if (!replay && !finished) {
         if (timing) {
@@ -44,7 +71,7 @@ function gameTickTrue() {
         }
         for (let key in lastKeys) {
             if (!(key in keys)) {
-                inputs[key] = false
+                delete inputs[key]
                 replayInputs.push([false, key, replayT])
             }
         }
@@ -63,9 +90,11 @@ function gameTickTrue() {
         replayT += gameDelta
         while (replayInputsC.length > 0 && replayInputsC[0][2] < replayT) {
             inputs[replayInputsC[0][1]] = replayInputsC[0][0]
+            if (!inputs[replayInputsC[0][1]]) {
+                delete inputs[replayInputsC[0][1]]
+            }
             replayInputsC.splice(0, 1)
-        }
-        
+        }        
     } else {
         replay = false
         replayInputsC = JSON.parse(JSON.stringify(replayInputs))
@@ -124,14 +153,14 @@ var gameDelta = 1/targetTicks
 var vtime = 0
 
 function gameTick() {
-    if (jKeys["KeyR"]) {
-        replay = !replay
-        if (replay) {
-            replayT = 0
-            inputs = {}
-            loadMap(mapIndex, false)
-        }
-    }
+    // if (jKeys["KeyR"]) {
+    //     replay = !replay
+    //     if (replay) {
+    //         replayT = 0
+    //         inputs = {}
+    //         loadMap(mapIndex, false)
+    //     }
+    // }
 
     runTime += delta
     while (gameTicks < runTime*targetTicks) {
@@ -143,6 +172,11 @@ function gameTick() {
     player.vy = lerp(player.vy, player.y, delta*15)
     player.vrot = lerp(player.vrot, player.rot, delta*15)
     player.vdragRot = lerp(player.vdragRot, player.dragRot, delta*15)
+
+    ghostPlayer.vx = lerp(ghostPlayer.vx, ghostPlayer.x, delta*15)
+    ghostPlayer.vy = lerp(ghostPlayer.vy, ghostPlayer.y, delta*15)
+    ghostPlayer.vrot = lerp(ghostPlayer.vrot, ghostPlayer.rot, delta*15)
+    ghostPlayer.vdragRot = lerp(ghostPlayer.vdragRot, ghostPlayer.dragRot, delta*15)
 
     camera.x = lerp(camera.x, player.x+player.velX/5, delta*5)
     camera.y = lerp(camera.y, player.y+player.velY/5, delta*5)
@@ -182,6 +216,12 @@ function gameTick() {
         particles[i].draw()
     }
 
+    if (bestReplays[mapIndex] && bestReplays[mapIndex].length > 0 && (timing || finished) && !replay) {
+        ctx.globalAlpha = 0.25
+        ghostPlayer.draw()
+        ctx.globalAlpha = 1
+    }
+    
     player.draw()
 
     if (finished) { timing = false }
@@ -190,9 +230,9 @@ function gameTick() {
     vtime = lerp(vtime, time, delta*20)
     ui.text(50*su, 50*su, 50*su, `TIME: ${Math.round(vtime*100)/100}`)
 
-    menuButton.set(canvas.width - 210*su, 60*su, 200*su, 50*su)
+    menuButton.set(canvas.width - 170*su, (75/2+20)*su, 300*su, 75*su)
     menuButton.bgColour = [255, 0, 0, 0.5]
-    menuButton.textSize = 35*su
+    menuButton.textSize = 52.5*su
 
     menuButton.basic()
     menuButton.draw()
@@ -214,11 +254,13 @@ function gameTick() {
 
     ctx.globalAlpha = popupAlpha
 
-    ui.rect(canvas.width/2, canvas.height/2, 600*su, 400*su, [50, 50, 50, 0.7], 10*su, [255, 255, 255, 1])
-    ui.text(canvas.width/2, canvas.height/2 - 150*su, 50*su, "Complete!", {align: "center"})
+    ui.rect(canvas.width/2, canvas.height/2, 900*su, 600*su, [50, 50, 50, 0.7], 15*su, [255, 255, 255, 1])
+    ui.text(canvas.width/2, canvas.height/2 - 225*su, 75*su, "Complete!", {align: "center"})
 
-    ui.text(canvas.width/2, canvas.height/2 - 100*su, 25*su, "Time: " + Math.round(time*100)/100, {align: "center"})
-    ui.text(canvas.width/2, canvas.height/2 - 70*su, 25*su, "Best Time: " + Math.round(time*100)/100, {align: "center"})
+    ui.text(canvas.width/2, canvas.height/2 - 150*su, 37.5*su, "Time: " + Math.round(time*100)/100, {align: "center"})
+    if (bestTimes[mapIndex]) {
+        ui.text(canvas.width/2, canvas.height/2 - 105*su, 37.5*su, "Best Time: " + Math.round(bestTimes[mapIndex]*100)/100, {align: "center"})
+    }
 
     if (finished) {
         if (mapIndex < maps.length-1) {
@@ -227,21 +269,29 @@ function gameTick() {
             nextLevelButton.text = "Restart"
         }
     }
-    nextLevelButton.set(canvas.width/2, canvas.height/2, 200*su, 50*su)
+    nextLevelButton.set(canvas.width/2, canvas.height/2, 300*su, 75*su)
     nextLevelButton.bgColour = [0, 0, 0, 0.5]
-    nextLevelButton.textSize = 35*su
+    nextLevelButton.textSize = 52.5*su
     if (finished) {
         nextLevelButton.basic()
     }
     nextLevelButton.draw()
 
-    retryButton.set(canvas.width/2, canvas.height/2 + 55*su, 200*su, 50*su)
+    retryButton.set(canvas.width/2, canvas.height/2 + 82.5*su, 300*su, 75*su)
     retryButton.bgColour = [0, 0, 0, 0.5]
-    retryButton.textSize = 35*su
+    retryButton.textSize = 52.5*su
     if (finished) {
         retryButton.basic()
     }
     retryButton.draw()
+
+    replayBestButton.set(canvas.width/2, canvas.height/2 + 82.5*2*su, 300*su, 75*su)
+    replayBestButton.bgColour = [0, 0, 0, 0.5]
+    replayBestButton.textSize = 45*su
+    if (finished) {
+        replayBestButton.basic()
+    }
+    replayBestButton.draw()
 
     ctx.globalAlpha = 1
 
@@ -257,9 +307,32 @@ function gameTick() {
         retryButton.click()
         loadMap(mapIndex)
     }
+    if (replayBestButton.hovered() && mouse.lclick && finished) {
+        replayBestButton.click()
+        replay = true
+        replayT = 0
+        inputs = {}
+        replayInputs = JSON.parse(JSON.stringify(bestReplays[mapIndex]))
+        replayInputsC = JSON.parse(JSON.stringify(replayInputs))
+        loadMap(mapIndex, false)
+    }
 }
 
 function onFinish() {
+    if (finished) return
     finished = true
     timing = false
+
+    while (mapIndex >= bestTimes.length) {
+        bestTimes.push(-1)
+        bestReplays.push([])
+    }
+
+    if (time < bestTimes[mapIndex] || bestTimes[mapIndex] == -1) {
+        bestTimes[mapIndex] = time
+        bestReplays[mapIndex] = JSON.parse(JSON.stringify(replayInputs))
+    }
+
+    localStorage.setItem("bestTimes", JSON.stringify(bestTimes))
+    localStorage.setItem("bestReplays", JSON.stringify(bestReplays))
 }

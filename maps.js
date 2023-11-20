@@ -49,6 +49,20 @@ function loadMap(index, clearReplay=true) {
     vtime = 0
     lastKeys = {}
     inputs = {}
+    ghostInputs = {}
+
+    ghostReplayInputs = JSON.parse(JSON.stringify(bestReplays[index]))
+    ghostReplayT = 0
+    ghostPlayer.x = player.x
+    ghostPlayer.y = player.y
+    ghostPlayer.rot = player.rot
+    ghostPlayer.vx = player.vx
+    ghostPlayer.vy = player.vy
+    ghostPlayer.vrot = player.vrot
+    ghostPlayer.velX = 0
+    ghostPlayer.velY = 0
+    ghostPlayer.finished = false
+
     if (clearReplay) {
         replayInputs = []
     }

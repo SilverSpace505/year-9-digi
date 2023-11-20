@@ -15,6 +15,7 @@ class Particle {
     vx = 0
     vy = 0
     vrealSize = 0
+    fromGhost = false
     constructor(x, y, velX, velY, drag) {
         this.x = x
         this.y = y
@@ -57,6 +58,9 @@ class Particle {
         }
     }
     draw() {
+        if (this.fromGhost) {
+            ctx.globalAlpha = 0.25
+        }
         this.vx = lerp(this.vx, this.x, delta*15)
         this.vy = lerp(this.vy, this.y, delta*15)
         this.vrealSize = lerp(this.vrealSize, this.realSize, delta*15)
@@ -74,6 +78,9 @@ class Particle {
         
         ctx.fillStyle = gradient
         ctx.fill()
+        if (this.fromGhost) {
+            ctx.globalAlpha = 1
+        }
     }
 }
 

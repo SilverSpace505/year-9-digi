@@ -16,13 +16,15 @@ class Player {
     vy = 0
     vrot = 0
     vdragRot = 0
+    isGhost = false
+    finished = false
     constructor(x, y, size) {
         this.x = x
         this.y = y
         this.size = size
     }
     update() {
-        if (inputs["KeyW"] && !finished) {
+        if (inputs["KeyW"] && !finished && !this.finished) {
             timing = true
             this.velX -= Math.sin(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)/37.5+1)
             this.velY -= Math.cos(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)/37.5+1)
@@ -33,14 +35,15 @@ class Player {
                     Math.cos(this.rot+rotOff)*this.speed * ((this.maxDistance - this.rDistance)/15+1)*500, 
                     1))
                 particles[particles.length-1].size = (this.maxDistance-this.rDistance)/this.maxDistance*2.5
+                particles[particles.length-1].fromGhost = this.isGhost
             }
         }
-        if (inputs["KeyS"] && !finished) {
+        if (inputs["KeyS"] && !finished && !this.finished) {
             timing = true
             this.velX += Math.sin(this.rot)*this.speed/2*gameDelta
             this.velY += Math.cos(this.rot)*this.speed/2*gameDelta
         }
-        if (inputs["KeyA"] && !finished) {
+        if (inputs["KeyA"] && !finished && !this.finished) {
             timing = true
             if (inputs["KeyS"]) {
                 this.rot -= this.rotSpeed*gameDelta
@@ -54,7 +57,7 @@ class Player {
                 // }
             }
         }
-        if (inputs["KeyD"] && !finished) {
+        if (inputs["KeyD"] && !finished && !this.finished) {
             timing = true
             if (inputs["KeyS"]) {
                 this.rot += this.rotSpeed*gameDelta
@@ -157,8 +160,8 @@ class Player {
                 this.y -= Math.cos(angle)*this.fixDistance
                 collided = true
             }
-            this.fixDistance += 0.01
-            moved += 0.01
+            this.fixDistance += 0.1
+            moved += 0.1
             // console.log(start, Date.now(), Date.now()-start)
         }
         return collided
@@ -195,7 +198,11 @@ class Player {
                             l[0], l[1],
                             m[i4][0], m[i4][1]
                         )) {
-                            onFinish()
+                            if (this.isGhost) {
+                                this.finished = true
+                            } else {
+                                onFinish()
+                            }
                         }
 
                         continue

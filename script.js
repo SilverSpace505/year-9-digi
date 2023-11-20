@@ -23,6 +23,18 @@ ui.textShadow.bottom = "auto"
 
 utils.setGlobals()
 
+var bestTimes = []
+var bestReplays = []
+
+let loadedTimes = localStorage.getItem("bestTimes")
+if (loadedTimes) {
+    bestTimes = JSON.parse(loadedTimes)
+}
+let loadedReplays = localStorage.getItem("bestReplays")
+if (loadedReplays) {
+    bestReplays = JSON.parse(loadedReplays)
+}
+
 function update(timestamp) {
     requestAnimationFrame(update)
     input.setGlobals()
