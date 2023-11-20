@@ -11,6 +11,7 @@ class Player {
     distance = 0
     rDistance = 0
     maxDistance = 150
+    fixDistance = 0
     constructor(x, y, size) {
         this.x = x
         this.y = y
@@ -143,24 +144,24 @@ class Player {
     fixCollision() {
         let splits = 8
         let collided = false
-        let tries = 0
-        let distance = 0
-        while (tries < 5) {
+        let start = Date.now()
+        while (Date.now() - start < 1) {
             for (let angleI = 0; angleI < splits; angleI++) {
                 let angle = Math.PI*2 / splits * angleI
-                this.x += Math.sin(angle)*distance
-                this.y += Math.cos(angle)*distance
+                this.x += Math.sin(angle)*this.fixDistance
+                this.y += Math.cos(angle)*this.fixDistance
                 if (!this.checkCollide()) {
-                    distance = 0
+                    this.fixDistance = 0
                     return collided
                 }
-                this.x -= Math.sin(angle)*distance
-                this.y -= Math.cos(angle)*distance
+                this.x -= Math.sin(angle)*this.fixDistance
+                this.y -= Math.cos(angle)*this.fixDistance
                 collided = true
             }
-            distance += 0.01
-            // tries++
+            this.fixDistance += 0.01*delta*100
+            // console.log(start, Date.now(), Date.now()-start)
         }
+        console.log("too long")
         return collided
     }
     checkCollide() {
