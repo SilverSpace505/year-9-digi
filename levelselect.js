@@ -21,6 +21,7 @@ function levelSelectTick() {
 
         if (lvlButtons[i].hovered() && mouse.lclick) {
             lvlButtons[i].click()
+            replay = false
             loadMap(parseInt(i))
             camera.zoom = su*1.5
             scene = "game"

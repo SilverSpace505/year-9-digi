@@ -14,9 +14,6 @@ fetch("maps.txt")
     let splitMaps = data.split("|")
     maps = JSON.parse(splitMaps[0])
     mapSpawns = JSON.parse(splitMaps[1])
-    for (let map of maps) {
-        map[map.length-1].push(map[map.length-1][1]+1)
-    }
     setTimeout(() => {
         loadMap(0)
     }, 100)
@@ -31,7 +28,7 @@ var map = []
 var mapData = []
 var mapIndex = 0
 
-function loadMap(index) {
+function loadMap(index, clearReplay=true) {
     map = maps[index].slice(0, maps[index].length-1)
     mapData = maps[index]
     player.x = mapSpawns[index].x
@@ -39,11 +36,22 @@ function loadMap(index) {
     player.velX = 0
     player.velY = 0
     player.rot = mapSpawns[index].rot
+    player.vx = player.x
+    player.vy = player.y
+    player.vrot = player.rot
     finished = false
     timing = false
     selected = -1
     sLayer = 0
     time = 0
+    timeInTicks = 0
+    inputCooldown = 0
+    vtime = 0
+    lastKeys = {}
+    inputs = {}
+    if (clearReplay) {
+        replayInputs = []
+    }
     mapIndex = index
 }
 

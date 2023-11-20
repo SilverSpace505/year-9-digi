@@ -62,8 +62,10 @@ function update(timestamp) {
         zoomT = 4
         camera.zoom = zoomT*su
         menuPlayer.velX = 500
-        menuPlayer.dragRot = Math.PI/8
-        menuPlayer.rot = Math.PI/8
+        menuPlayer.vdragRot = Math.PI/8
+        menuPlayer.vrot = Math.PI/8
+        menuPlayer.vx = menuPlayer.x
+        menuPlayer.vy = menuPlayer.y
         menuPlayer.draw()
         camera.x = 0
         camera.y = 0

@@ -12,8 +12,137 @@ var menuButton = new ui.Button(0, 0, 0, 0, "rect", "Menu")
 nextLevelButton.hoverMul = 0.925
 retryButton.hoverMul = 0.925
 
-function gameTick() {
+var inputs = {}
+var inputCooldown = 0
+
+var replayInputs = []
+
+var replay = false
+var replayT = 0
+var replayInputsC = []
+
+var lastKeys = {}
+
+var gameTicks = 0
+
+var timeInTicks = 0
+
+function gameTickTrue() {
+
+    if (!finished && timing) {
+        timeInTicks++
+    }
+    // if (finished) {
+    //     console.log(timeInTicks)
+    // }
+    
+    if (!replay && !finished) {
+        if (timing) {
+            replayT += gameDelta
+        } else {
+            replayT = 0
+        }
+        for (let key in lastKeys) {
+            if (!(key in keys)) {
+                inputs[key] = false
+                replayInputs.push([false, key, replayT])
+            }
+        }
+    
+        for (let key in keys) {
+            if (!(key in lastKeys)) {
+                inputs[key] = true
+                replayInputs.push([true, key, replayT])
+            }
+        }
+        
+        lastKeys = {...keys}
+    }
+    
+    if (replay && replayInputsC.length > 0) {
+        replayT += gameDelta
+        while (replayInputsC.length > 0 && replayInputsC[0][2] < replayT) {
+            inputs[replayInputsC[0][1]] = replayInputsC[0][0]
+            replayInputsC.splice(0, 1)
+        }
+        
+    } else {
+        replay = false
+        replayInputsC = JSON.parse(JSON.stringify(replayInputs))
+    }
+    
+    // if (inputCooldown <= 0) {
+    //     if (replay) {
+    //         console.log(replayI)
+    //         if (finished && replayI < replayInputs.length) {
+    //             console.log("Run Invalid", replayI, ">", replayInputs.length)
+    //             replay = false
+    //         }
+    //         inputs = {...replayInputs[replayI]}
+    //         replayI++
+    //         if (replayI >= replayInputs.length) {
+    //             if (!finished) {
+    //                 console.log("Run Invalid", replayI-1, "<", replayInputs.length)
+    //             }
+    //             replayI = 0
+    //             replay = false
+    //         }
+    //     } else if (!finished) {
+    //         inputs = {...keys}
+    //         if (timing) {
+    //             replayInputs.push({...keys})
+    //         }
+    //     }
+    //     if (timing) {
+    //         inputCooldown = 1/20
+    //     }
+    // }
+    // inputCooldown -= delta
+
     player.update()
+
+    for (let i = 0; i < particles.length; i++) {
+        particles[i].move()
+        particles[i].draw()
+
+        if (particles[i].lifetime > 0.02) {
+            particles.splice(i, 1)
+            i--
+        }
+    }
+
+    if (timing) {
+        time += gameDelta
+    }
+
+}
+
+var runTime = 0
+var targetTicks = 30
+var gameDelta = 1/targetTicks
+
+var vtime = 0
+
+function gameTick() {
+    if (jKeys["KeyR"]) {
+        replay = !replay
+        if (replay) {
+            replayT = 0
+            inputs = {}
+            loadMap(mapIndex, false)
+        }
+    }
+
+    runTime += delta
+    while (gameTicks < runTime*targetTicks) {
+        gameTickTrue()
+        gameTicks += 1
+    }
+
+    player.vx = lerp(player.vx, player.x, delta*15)
+    player.vy = lerp(player.vy, player.y, delta*15)
+    player.vrot = lerp(player.vrot, player.rot, delta*15)
+    player.vdragRot = lerp(player.vdragRot, player.dragRot, delta*15)
 
     camera.x = lerp(camera.x, player.x+player.velX/5, delta*5)
     camera.y = lerp(camera.y, player.y+player.velY/5, delta*5)
@@ -50,25 +179,16 @@ function gameTick() {
     }
 
     for (let i = 0; i < particles.length; i++) {
-        particles[i].move()
         particles[i].draw()
-
-        if (particles[i].lifetime > 0.02) {
-            particles.splice(i, 1)
-            i--
-        }
     }
 
     player.draw()
 
     if (finished) { timing = false }
 
-    if (timing) {
-        time += delta
-    }
-
     // ui.textShadow.multiply = 0.75
-    ui.text(50*su, 50*su, 50*su, `TIME: ${Math.round(time*100)/100}`)
+    vtime = lerp(vtime, time, delta*20)
+    ui.text(50*su, 50*su, 50*su, `TIME: ${Math.round(vtime*100)/100}`)
 
     menuButton.set(canvas.width - 210*su, 60*su, 200*su, 50*su)
     menuButton.bgColour = [255, 0, 0, 0.5]
@@ -137,7 +257,6 @@ function gameTick() {
         retryButton.click()
         loadMap(mapIndex)
     }
-
 }
 
 function onFinish() {

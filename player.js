@@ -12,63 +12,67 @@ class Player {
     rDistance = 0
     maxDistance = 150
     fixDistance = 0
+    vx = 0
+    vy = 0
+    vrot = 0
+    vdragRot = 0
     constructor(x, y, size) {
         this.x = x
         this.y = y
         this.size = size
     }
     update() {
-        if (keys["KeyW"] && !finished) {
+        if (inputs["KeyW"] && !finished) {
             timing = true
-            this.velX -= Math.sin(this.rot)*this.speed*delta * ((this.maxDistance - this.rDistance)/37.5+1)
-            this.velY -= Math.cos(this.rot)*this.speed*delta * ((this.maxDistance - this.rDistance)/37.5+1)
-            for (let i = 0; i < 2; i++) {
+            this.velX -= Math.sin(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)/37.5+1)
+            this.velY -= Math.cos(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)/37.5+1)
+            for (let i = 0; i < 200/targetTicks; i++) {
                 let rotOff = (Math.random()-0.5)*2 * Math.PI/2
                 particles.push(new Particle(this.x, this.y, 
-                    Math.sin(this.rot+rotOff)*this.speed*delta * ((this.maxDistance - this.rDistance)/15+1)*500, 
-                    Math.cos(this.rot+rotOff)*this.speed*delta * ((this.maxDistance - this.rDistance)/15+1)*500, 
+                    Math.sin(this.rot+rotOff)*this.speed * ((this.maxDistance - this.rDistance)/15+1)*500, 
+                    Math.cos(this.rot+rotOff)*this.speed * ((this.maxDistance - this.rDistance)/15+1)*500, 
                     1))
                 particles[particles.length-1].size = (this.maxDistance-this.rDistance)/this.maxDistance*2.5
             }
         }
-        if (keys["KeyS"] && !finished) {
+        if (inputs["KeyS"] && !finished) {
             timing = true
-            this.velX += Math.sin(this.rot)*this.speed/2*delta
-            this.velY += Math.cos(this.rot)*this.speed/2*delta
+            this.velX += Math.sin(this.rot)*this.speed/2*gameDelta
+            this.velY += Math.cos(this.rot)*this.speed/2*gameDelta
         }
-        if (keys["KeyA"] && !finished) {
+        if (inputs["KeyA"] && !finished) {
             timing = true
-            if (keys["KeyS"]) {
-                this.rot -= this.rotSpeed*delta
+            if (inputs["KeyS"]) {
+                this.rot -= this.rotSpeed*gameDelta
                 // if (this.checkCollide()) {
-                //     this.rot += this.rotSpeed*delta
+                //     this.rot += this.rotSpeed*gameDelta
                 // }
             } else {
-                this.rot += this.rotSpeed*delta
+                this.rot += this.rotSpeed*gameDelta
                 // if (this.checkCollide()) {
-                //     this.rot -= this.rotSpeed*delta
+                //     this.rot -= this.rotSpeed*gameDelta
                 // }
             }
         }
-        if (keys["KeyD"] && !finished) {
+        if (inputs["KeyD"] && !finished) {
             timing = true
-            if (keys["KeyS"]) {
-                this.rot += this.rotSpeed*delta
+            if (inputs["KeyS"]) {
+                this.rot += this.rotSpeed*gameDelta
                 // if (this.checkCollide()) {
-                //     this.rot -= this.rotSpeed*delta
+                //     this.rot -= this.rotSpeed*gameDelta
                 // }
             } else {
-                this.rot -= this.rotSpeed*delta
+                this.rot -= this.rotSpeed*gameDelta
                 // if (this.checkCollide()) {
-                //     this.rot += this.rotSpeed*delta
+                //     this.rot += this.rotSpeed*gameDelta
                 // }
             }
         }
-        this.velX = lerp(this.velX, 0, delta*100*(1-0.99))
-        this.velY = lerp(this.velY, 0, delta*100*(1-0.99))
+        this.velX = lerp(this.velX, 0, gameDelta*100*(1-0.99))
+        this.velY = lerp(this.velY, 0, gameDelta*100*(1-0.99))
         
         for (let i = 0; i < 100; i++) {
-            this.x += this.velX * delta / 100
+            this.x += this.velX * gameDelta / 100
             if (this.fixCollision()) {
                 this.velX *= 0.9999
                 // if (this.rDistance > 50) {
@@ -79,7 +83,7 @@ class Player {
                 //     this.velX *= 0.999
                 // }
             }
-            this.y += this.velY * delta / 100
+            this.y += this.velY * gameDelta / 100
             if (this.fixCollision()) {
                 this.velY *= 0.9999
                 // if (this.rDistance > 50) {
@@ -127,25 +131,20 @@ class Player {
             this.rDistance = rDistance
         }
         
-        for (let i = 0; i < 9; i++) {
-            if (jKeys["Digit"+i]) {
-                loadMap(i)
-            }
-        }
-        
         // if (collided) {
-        //     this.velX -= (1-0.9)*delta*this.velX * 100
-        //     this.velY -= (1-0.9)*delta*thiwds.velY * 100
+        //     this.velX -= (1-0.9)*gameDelta*this.velX * 100
+        //     this.velY -= (1-0.9)*gameDelta*thiwds.velY * 100
         // }
-        this.dragRot += (this.rot-this.dragRot)*delta*10
+        this.dragRot += (this.rot-this.dragRot)*gameDelta*10
         // this.checkCollide()
         // console.log(this.checkCollide())
     }
     fixCollision() {
         let splits = 8
         let collided = false
-        let start = Date.now()
-        while (Date.now() - start < 1) {
+        let moved = 0
+        // let start = new Date().getTime()
+        while (moved < 5) {
             for (let angleI = 0; angleI < splits; angleI++) {
                 let angle = Math.PI*2 / splits * angleI
                 this.x += Math.sin(angle)*this.fixDistance
@@ -158,10 +157,10 @@ class Player {
                 this.y -= Math.cos(angle)*this.fixDistance
                 collided = true
             }
-            this.fixDistance += 0.01*delta*100
+            this.fixDistance += 0.01
+            moved += 0.01
             // console.log(start, Date.now(), Date.now()-start)
         }
-        console.log("too long")
         return collided
     }
     checkCollide() {
@@ -219,26 +218,26 @@ class Player {
     }
     draw() {
         ctx.beginPath()
-        ctx.moveTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(-100*this.size*camera.zoom, 0*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(-100*this.size*camera.zoom, 0*this.size*camera.zoom, this.rot).y)                              
-        ctx.lineTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.rot).y)
-        ctx.lineTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.rot).y)
-        ctx.lineTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, -85*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, -85*this.size*camera.zoom, this.rot).y)
+        ctx.moveTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(-100*this.size*camera.zoom, 0*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(-100*this.size*camera.zoom, 0*this.size*camera.zoom, this.vrot).y)                              
+        ctx.lineTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.vrot).y)
+        ctx.lineTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.vrot).y)
+        ctx.lineTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, -85*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, -85*this.size*camera.zoom, this.vrot).y)
         
         ctx.closePath()
 
         ctx.fillStyle = "blue"
         ctx.fill()
         
-        if ((Math.abs(this.velX)+Math.abs(this.velY))/2 > 25 && (!keys["KeyS"] || scene != "game")) {
+        if ((Math.abs(this.velX)+Math.abs(this.velY))/2 > 25 && (!inputs["KeyS"] || scene != "game")) {
             ctx.beginPath()
         
-            ctx.moveTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.rot).y)
+            ctx.moveTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.vrot).y)
             let x = ((Math.abs(this.velX)+Math.abs(this.velY))/2/2+50+Math.random()*25)
             let y = (0+(Math.random()-0.5)*2*25)
-            ctx.lineTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(x*this.size*camera.zoom, y*this.size*camera.zoom, this.dragRot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(x*this.size*camera.zoom, y*this.size*camera.zoom, this.dragRot).y)
+            ctx.lineTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(x*this.size*camera.zoom, y*this.size*camera.zoom, this.vdragRot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(x*this.size*camera.zoom, y*this.size*camera.zoom, this.vdragRot).y)
             
-            ctx.lineTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, -85*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, -85*this.size*camera.zoom, this.rot).y)
-            ctx.lineTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.rot).y)
+            ctx.lineTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, -85*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, -85*this.size*camera.zoom, this.vrot).y)
+            ctx.lineTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.vrot).y)
     
             ctx.closePath()
     
@@ -250,12 +249,12 @@ class Player {
 
             let redSize = 0.75
         
-            ctx.moveTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, 85*redSize*0.83*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, 85*redSize*0.83*this.size*camera.zoom, this.rot).y)
+            ctx.moveTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, 85*redSize*0.83*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, 85*redSize*0.83*this.size*camera.zoom, this.vrot).y)
             x *= redSize
-            ctx.lineTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(x*this.size*camera.zoom, y*this.size*camera.zoom, this.dragRot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(x*this.size*camera.zoom, y*this.size*camera.zoom, this.dragRot).y)
+            ctx.lineTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(x*this.size*camera.zoom, y*this.size*camera.zoom, this.vdragRot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(x*this.size*camera.zoom, y*this.size*camera.zoom, this.vdragRot).y)
             
-            ctx.lineTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, -85*redSize*0.83*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, -85*redSize*0.83*this.size*camera.zoom, this.rot).y)
-            ctx.lineTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.rot).y)
+            ctx.lineTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, -85*redSize*0.83*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, -85*redSize*0.83*this.size*camera.zoom, this.vrot).y)
+            ctx.lineTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.vrot).y)
     
             ctx.closePath()
     
@@ -265,10 +264,10 @@ class Player {
 
         ctx.beginPath()
 
-        ctx.moveTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(-100*this.size*camera.zoom, 0*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(-100*this.size*camera.zoom, 0*this.size*camera.zoom, this.rot).y)                              
-        ctx.lineTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.rot).y)
-        ctx.lineTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.rot).y)
-        ctx.lineTo((this.x-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, -85*this.size*camera.zoom, this.rot).x, (this.y-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, -85*this.size*camera.zoom, this.rot).y)
+        ctx.moveTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(-100*this.size*camera.zoom, 0*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(-100*this.size*camera.zoom, 0*this.size*camera.zoom, this.vrot).y)                              
+        ctx.lineTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.vrot).y)
+        ctx.lineTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(50*this.size*camera.zoom, 0*this.size*camera.zoom, this.vrot).y)
+        ctx.lineTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, -85*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, -85*this.size*camera.zoom, this.vrot).y)
         
         ctx.closePath()
 
