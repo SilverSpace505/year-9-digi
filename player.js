@@ -28,14 +28,16 @@ class Player {
             timing = true
             this.velX -= Math.sin(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)/37.5+1)
             this.velY -= Math.cos(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)/37.5+1)
-            for (let i = 0; i < 200/targetTicks; i++) {
-                let rotOff = (Math.random()-0.5)*2 * Math.PI/2
-                particles.push(new Particle(this.x, this.y, 
-                    Math.sin(this.rot+rotOff)*this.speed * ((this.maxDistance - this.rDistance)/15+1)*500, 
-                    Math.cos(this.rot+rotOff)*this.speed * ((this.maxDistance - this.rDistance)/15+1)*500, 
-                    1))
-                particles[particles.length-1].size = (this.maxDistance-this.rDistance)/this.maxDistance*2.5
-                particles[particles.length-1].fromGhost = this.isGhost
+            if (!this.isGhost) {
+                for (let i = 0; i < 200/targetTicks; i++) {
+                    let rotOff = (Math.random()-0.5)*2 * Math.PI/2
+                    particles.push(new Particle(this.x, this.y, 
+                        Math.sin(this.rot+rotOff)*this.speed * ((this.maxDistance - this.rDistance)/15+1)*500, 
+                        Math.cos(this.rot+rotOff)*this.speed * ((this.maxDistance - this.rDistance)/15+1)*500, 
+                        1))
+                    particles[particles.length-1].size = (this.maxDistance-this.rDistance)/this.maxDistance*2.5
+                    particles[particles.length-1].fromGhost = this.isGhost
+                }
             }
         }
         if (inputs["KeyS"] && !finished && !this.finished) {
