@@ -122,3 +122,20 @@ function update(timestamp) {
 }
 
 update()
+
+input.checkInputs = (event) => {
+    if (input.focused) {
+		input.focused.focused = false
+		input.focused = null
+	}
+
+    if (scene == "menu" && accountOpen && aPage == "signup") {
+        usernameT.checkFocus(event)
+        passwordT.checkFocus(event)
+    }
+
+
+    if (!input.focused) {
+		input.getInput.blur()
+	}
+}
