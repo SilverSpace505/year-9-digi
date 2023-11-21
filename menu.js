@@ -1,6 +1,7 @@
 
 var playButton = new ui.Button(0, 0, 0, 0, "rect", "Play")
 var instructionsButton = new ui.Button(0, 0, 0, 0, "rect", "Instructions")
+var leaderboardButton = new ui.Button(0, 0, 0, 0, "rect", "Leaderboard")
 // var playButton = new ui.Button(0, 0, 0, 0, "rect", "Play")
 // var playButton = new ui.Button(0, 0, 0, 0, "rect", "Play")
 
@@ -29,5 +30,17 @@ function menuTick() {
     if (instructionsButton.hovered() && mouse.lclick) {
         instructionsButton.click()
         scene = "instructions"
+    }
+
+    leaderboardButton.set(canvas.width/2, canvas.height/2+(75+50-2.5)*2*su, 400*su, 100*su)
+    leaderboardButton.textSize = 60*su
+    leaderboardButton.bgColour = [50, 50, 50, 0.5]
+
+    leaderboardButton.draw()
+    leaderboardButton.basic()
+
+    if (leaderboardButton.hovered() && mouse.lclick) {
+        leaderboardButton.click()
+        scene = "leaderboard"
     }
 }

@@ -67,6 +67,8 @@ class Particle {
 
         this.animTime += delta * Math.random()*2
 
+        if (5*this.vrealSize*camera.zoom <= 0) { return }
+
         var gradient = ctx.createRadialGradient((this.vx-camera.x)*camera.zoom+canvas.width/2, (this.vy-camera.y)*camera.zoom+canvas.height/2, 0, (this.vx-camera.x)*camera.zoom+canvas.width/2, (this.vy-camera.y)*camera.zoom+canvas.height/2, 5*this.vrealSize*camera.zoom)
         gradient.addColorStop(this.startP, `rgba(${150 + this.colour[0]}, ${230 + this.colour[1]}, ${255 + this.colour[2]}, 1)`)
         gradient.addColorStop(this.endP, `rgba(${150 + this.colour[0]}, ${230 + this.colour[1]}, ${255 + this.colour[2]}, 0)`)

@@ -34,6 +34,8 @@ var ghostReplayT = 0
 var ghostReplayInputs = []
 var ghostInputs = []
 
+var fps = 0
+
 function gameTickTrue() {
 
     if (!finished && timing) {
@@ -152,6 +154,11 @@ var gameDelta = 1/targetTicks
 
 var vtime = 0
 
+setInterval(() => {
+    console.log(fps)
+    fps = 0
+}, 1000)
+
 function gameTick() {
     // if (jKeys["KeyR"]) {
     //     replay = !replay
@@ -167,6 +174,8 @@ function gameTick() {
         gameTickTrue()
         gameTicks += 1
     }
+
+    fps++
 
     player.vx = lerp(player.vx, player.x, delta*15)
     player.vy = lerp(player.vy, player.y, delta*15)

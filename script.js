@@ -114,6 +114,8 @@ function update(timestamp) {
         instructionsTick()
     } else if (scene == "levelselect") {
         levelSelectTick()
+    } else if (scene == "leaderboard") {
+        leaderboardTick()
     }
 
     input.updateInput()
