@@ -87,6 +87,14 @@ function gameTickTrue() {
         
         lastKeys = {...keys}
     }
+
+    if (replay && time > bestTimes[mapIndex]) {
+        bestTimes[mapIndex] = -1
+        bestReplays[mapIndex] = []
+        localStorage.setItem("bestTimes", JSON.stringify(bestTimes))
+        localStorage.setItem("bestReplays", JSON.stringify(bestReplays))
+        scene = "menu"
+    }
     
     // if (inputCooldown <= 0) {
     //     if (replay) {
@@ -142,7 +150,6 @@ function gameTickTrue() {
             replayInputsC.splice(0, 1)
         }        
     } else {
-        replay = false
         replayInputsC = JSON.parse(JSON.stringify(replayInputs))
     }
 
@@ -311,10 +318,12 @@ function gameTick() {
         } else {
             loadMap(0)
         }
+        replay = false
     }
     if (retryButton.hovered() && mouse.lclick && finished) {
         retryButton.click()
         loadMap(mapIndex)
+        replay = false
     }
     if (replayBestButton.hovered() && mouse.lclick && finished) {
         replayBestButton.click()
