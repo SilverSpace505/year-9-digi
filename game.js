@@ -88,20 +88,6 @@ function gameTickTrue() {
         lastKeys = {...keys}
     }
     
-    if (replay && replayInputsC.length > 0) {
-        replayT += gameDelta
-        while (replayInputsC.length > 0 && replayInputsC[0][2] < replayT) {
-            inputs[replayInputsC[0][1]] = replayInputsC[0][0]
-            if (!inputs[replayInputsC[0][1]]) {
-                delete inputs[replayInputsC[0][1]]
-            }
-            replayInputsC.splice(0, 1)
-        }        
-    } else {
-        replay = false
-        replayInputsC = JSON.parse(JSON.stringify(replayInputs))
-    }
-    
     // if (inputCooldown <= 0) {
     //     if (replay) {
     //         console.log(replayI)
@@ -144,6 +130,20 @@ function gameTickTrue() {
 
     if (timing) {
         time += gameDelta
+    }
+
+    if (replay && replayInputsC.length > 0) {
+        replayT += gameDelta
+        while (replayInputsC.length > 0 && replayInputsC[0][2] < replayT) {
+            inputs[replayInputsC[0][1]] = replayInputsC[0][0]
+            if (!inputs[replayInputsC[0][1]]) {
+                delete inputs[replayInputsC[0][1]]
+            }
+            replayInputsC.splice(0, 1)
+        }        
+    } else {
+        replay = false
+        replayInputsC = JSON.parse(JSON.stringify(replayInputs))
     }
 
 }
@@ -332,16 +332,18 @@ function onFinish() {
     finished = true
     timing = false
 
-    while (mapIndex >= bestTimes.length) {
-        bestTimes.push(-1)
-        bestReplays.push([])
+    if (!replay) {
+        while (mapIndex >= bestTimes.length) {
+            bestTimes.push(-1)
+            bestReplays.push([])
+        }
+    
+        if (time < bestTimes[mapIndex] || bestTimes[mapIndex] == -1) {
+            bestTimes[mapIndex] = time
+            bestReplays[mapIndex] = JSON.parse(JSON.stringify(replayInputs))
+        }
+    
+        localStorage.setItem("bestTimes", JSON.stringify(bestTimes))
+        localStorage.setItem("bestReplays", JSON.stringify(bestReplays))
     }
-
-    if (time < bestTimes[mapIndex] || bestTimes[mapIndex] == -1) {
-        bestTimes[mapIndex] = time
-        bestReplays[mapIndex] = JSON.parse(JSON.stringify(replayInputs))
-    }
-
-    localStorage.setItem("bestTimes", JSON.stringify(bestTimes))
-    localStorage.setItem("bestReplays", JSON.stringify(bestReplays))
 }
