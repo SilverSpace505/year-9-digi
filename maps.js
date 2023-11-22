@@ -40,6 +40,7 @@ function loadMap(index, clearReplay=true) {
     player.vy = player.y
     player.vrot = player.rot
     player.wallAngle = -1
+    player.wall = null
     finished = false
     timing = false
     selected = -1
@@ -68,6 +69,7 @@ function loadMap(index, clearReplay=true) {
     ghostPlayer.velY = 0
     ghostPlayer.finished = false
     ghostPlayer.wallAngle = -1
+    ghostPlayer.wall = null
 
     if (clearReplay) {
         replayInputs = []

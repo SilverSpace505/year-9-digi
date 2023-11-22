@@ -19,6 +19,7 @@ class Player {
     isGhost = false
     finished = false
     wallAngle = -1
+    wall = null
     constructor(x, y, size) {
         this.x = x
         this.y = y
@@ -27,12 +28,8 @@ class Player {
     update() {
         if (inputs["KeyW"] && !finished && !this.finished) {
             timing = true
-            let angleDiff = 1
-            if (this.wallAngle != -1) {
-                angleDiff = (Math.PI-angleD(this.rot, this.wallAngle))
-            }
-            this.velX -= Math.sin(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)/37.5*(angleDiff)+1)
-            this.velY -= Math.cos(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)/37.5*(angleDiff)+1)
+            this.velX -= Math.sin(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)**2/5000+1)
+            this.velY -= Math.cos(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)**2/5000+1)
             if (!this.isGhost) {
                 for (let i = 0; i < 200/targetTicks; i++) {
                     let rotOff = (Math.random()-0.5)*2 * Math.PI/2
@@ -78,35 +75,83 @@ class Player {
                 // }
             }
         }
+        
         this.velX = lerp(this.velX, 0, gameDelta*100*(1-0.99))
         this.velY = lerp(this.velY, 0, gameDelta*100*(1-0.99))
 
         this.wallAngle = -1
-        
-        for (let i = 0; i < 100; i++) {
-            this.x += this.velX * gameDelta / 100
-            if (this.fixCollision()) {
-                this.velX *= 0.9999
-                // if (this.rDistance > 50) {
-                //     this.velX *= -0.25
-                //     this.velY *= 0.8
-                //     break
-                // } else {
-                //     this.velX *= 0.999
-                // }
-            }
-            this.y += this.velY * gameDelta / 100
-            if (this.fixCollision()) {
-                this.velY *= 0.9999
-                // if (this.rDistance > 50) {
-                //     this.velY *= -0.25
-                //     this.velX *= 0.8
-                //     break
-                // } else {
-                //     this.velY *= 0.999
-                // }
-            }
+        this.wall = null
+
+        this.fixCollision()
+
+        this.x += this.velX * gameDelta
+        this.y += this.velY * gameDelta
+
+        while (this.checkCollide()) {
+           // Handle collision response here
+           const penetrationDepth = 0.1;
+           let normal = { x: this.wall[3] - this.wall[1], y: this.wall[0] - this.wall[2] }; // Normal to the wall
+           const length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+           normal.x /= length;
+           normal.y /= length;
+
+           // Check if the car is on the opposite side of the normal
+           const relativePosition = {
+               x: this.x - this.wall[0],
+               y: this.y - this.wall[1]
+           };
+           const dotProduct = relativePosition.x * normal.x + relativePosition.y * normal.y;
+
+           if (dotProduct < 0) {
+               // Reverse the normal if the car is on the other side of the wall
+               normal.x *= -1;
+               normal.y *= -1;
+           }
+
+           // Calculate the new velocity components by projecting the current velocity onto the wall
+           const speedAlongNormal = normal.x * this.velX + normal.y * this.velY;
+           const velXAlongNormal = normal.x * speedAlongNormal;
+           const velYAlongNormal = normal.y * speedAlongNormal;
+
+           // Calculate the sliding effect (friction)
+           const friction = 0.9; // Adjust this value based on your preference
+           const velXSliding = this.velX - velXAlongNormal * friction;
+           const velYSliding = this.velY - velYAlongNormal * friction;
+
+           // Apply the new velocity components
+           this.velX = velXSliding;
+           this.velY = velYSliding;
+
+           // Move the car slightly away from the wall to prevent it from getting stuck
+           this.x += normal.x * penetrationDepth;
+           this.y += normal.y * penetrationDepth;
         }
+        // this.move(this.velX*gameDelta, this.velY*gameDelta, 1/gameDelta/10)
+        
+        // for (let i = 0; i < 100; i++) {
+        //     this.x += this.velX * gameDelta / 100
+        //     if (this.fixCollision()) {
+        //         this.velX *= 0.99
+        //         // if (this.rDistance > 50) {
+        //         //     this.velX *= -0.25
+        //         //     this.velY *= 0.8
+        //         //     break
+        //         // } else {
+        //         //     this.velX *= 0.999
+        //         // }
+        //     }
+        //     this.y += this.velY * gameDelta / 100
+        //     if (this.fixCollision()) {
+        //         this.velY *= 0.99
+        //         // if (this.rDistance > 50) {
+        //         //     this.velY *= -0.25
+        //         //     this.velX *= 0.8
+        //         //     break
+        //         // } else {
+        //         //     this.velY *= 0.999
+        //         // }
+        //     }
+        // }
 
         this.rDistance = this.maxDistance
 
@@ -151,8 +196,68 @@ class Player {
         // this.checkCollide()
         // console.log(this.checkCollide())
     }
+    move(x, y, steps) {
+        for (let i = 0; i < steps; i++) {
+            this.x += x/steps
+            if (this.checkCollide()) {
+                let d = 0.1
+                let out = false
+                let amt = 100
+                while (!out && d <= amt) {
+                    this.y += d
+                    // this.velY -= d
+                    if (!this.checkCollide()) {
+                        out = true
+                    } else {
+                        this.y -= d*2
+                        // this.velY += d*2
+                        if (!this.checkCollide()) {
+                            out = true
+                        } else {
+                            this.y += d
+                            // this.velY -= d
+                        }
+                    }
+                    d += 0.1
+                }
+                if (d > amt) {
+                    this.x -= x/steps
+                }
+            }
+        }
+
+
+        for (let i = 0; i < steps; i++) {
+            this.y += y/steps
+            if (this.checkCollide()) {
+                let d = 0.1
+                let out = false
+                let amt = 25
+                while (!out && d <= amt) {
+                    this.x += d
+                    // this.velY -= d
+                    if (!this.checkCollide()) {
+                        out = true
+                    } else {
+                        this.x -= d*2
+                        // this.velY += d*2
+                        if (!this.checkCollide()) {
+                            out = true
+                        } else {
+                            this.x += d
+                            // this.velY -= d
+                        }
+                    }
+                    d += 0.1
+                }
+                if (d > amt) {
+                    this.y -= y/steps
+                }
+            }
+        }
+    }
     fixCollision() {
-        let splits = 4
+        let splits = 16
         let collided = false
         let moved = 0
         let solutions = []
@@ -235,6 +340,7 @@ class Player {
                         m[i4][0], m[i4][1]
                     )) {
                         this.wallAngle = -Math.atan2(m[i4][1]-l[1], m[i4][0]-l[0])
+                        this.wall = [l[0], l[1], m[i4][0], m[i4][1]]
                         return true
                     }
                     i3++
