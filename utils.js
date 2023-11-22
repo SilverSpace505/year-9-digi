@@ -3,6 +3,15 @@ function rv2(x, y, rot) {
     return {x: x*Math.sin(rot) + y*Math.sin(rot+Math.PI/2), y: x*Math.cos(rot) + y*Math.cos(rot+Math.PI/2)}
 }
 
+function angleD(a1, a2) {
+    a1 = (a1 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI)
+    a2 = (a2 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI)
+
+    let diff = Math.abs(a1 - a2)
+
+    return Math.min(diff, 2 * Math.PI - diff)
+}
+
 // function findIntersection(x1, y1, x2, y2, x3, y3, x4, y4) {
 //     const slope1 = (y2 - y1) / (x2 - x1)
 //     const yIntercept1 = y1 - slope1 * x1

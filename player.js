@@ -18,6 +18,7 @@ class Player {
     vdragRot = 0
     isGhost = false
     finished = false
+    wallAngle = -1
     constructor(x, y, size) {
         this.x = x
         this.y = y
@@ -26,8 +27,12 @@ class Player {
     update() {
         if (inputs["KeyW"] && !finished && !this.finished) {
             timing = true
-            this.velX -= Math.sin(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)/37.5+1)
-            this.velY -= Math.cos(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)/37.5+1)
+            let angleDiff = 1
+            if (this.wallAngle != -1) {
+                angleDiff = (Math.PI-angleD(this.rot, this.wallAngle))
+            }
+            this.velX -= Math.sin(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)/37.5*(angleDiff)+1)
+            this.velY -= Math.cos(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)/37.5*(angleDiff)+1)
             if (!this.isGhost) {
                 for (let i = 0; i < 200/targetTicks; i++) {
                     let rotOff = (Math.random()-0.5)*2 * Math.PI/2
@@ -75,6 +80,8 @@ class Player {
         }
         this.velX = lerp(this.velX, 0, gameDelta*100*(1-0.99))
         this.velY = lerp(this.velY, 0, gameDelta*100*(1-0.99))
+
+        this.wallAngle = -1
         
         for (let i = 0; i < 100; i++) {
             this.x += this.velX * gameDelta / 100
@@ -145,23 +152,35 @@ class Player {
         // console.log(this.checkCollide())
     }
     fixCollision() {
-        let splits = 8
+        let splits = 4
         let collided = false
         let moved = 0
+        let solutions = []
         // let start = new Date().getTime()
         while (moved < 5) {
+            solutions = []
             for (let angleI = 0; angleI < splits; angleI++) {
                 let angle = Math.PI*2 / splits * angleI
                 this.x += Math.sin(angle)*this.fixDistance
                 this.y += Math.cos(angle)*this.fixDistance
                 if (!this.checkCollide()) {
-                    this.fixDistance = 0
-                    return collided
+                    solutions.push(angleI)
+                    // this.fixDistance = 0
+                    // return collided
                 }
                 this.x -= Math.sin(angle)*this.fixDistance
                 this.y -= Math.cos(angle)*this.fixDistance
                 collided = true
             }
+
+            if (solutions.length > 0) {
+                let angle = Math.PI*2 / splits * solutions[0]
+                this.x += Math.sin(angle)*this.fixDistance
+                this.y += Math.cos(angle)*this.fixDistance
+                this.fixDistance = 0
+                return
+            }
+
             this.fixDistance += 0.1
             moved += 0.1
             // console.log(start, Date.now(), Date.now()-start)
@@ -215,6 +234,7 @@ class Player {
                         l[0], l[1],
                         m[i4][0], m[i4][1]
                     )) {
+                        this.wallAngle = -Math.atan2(m[i4][1]-l[1], m[i4][0]-l[0])
                         return true
                     }
                     i3++
@@ -283,6 +303,15 @@ class Player {
         ctx.lineWidth = 15*this.size*camera.zoom
         ctx.strokeStyle = "white"
         ctx.stroke()
+
+        // if (this.wallAngle != -1) {
+        //     ctx.beginPath()
+        //     ctx.moveTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(-100*camera.zoom, 0, this.wallAngle).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(-100*camera.zoom, 0, this.wallAngle).y)
+        //     ctx.lineTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(100*camera.zoom, 0, this.wallAngle).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(100*camera.zoom, 0, this.wallAngle).y)
+        //     ctx.lineWidth = 5*camera.zoom
+        //     ctx.strokeStyle = "red"
+        //     ctx.stroke()
+        // }
         
     }
 }

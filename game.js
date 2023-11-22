@@ -93,7 +93,10 @@ function gameTickTrue() {
         bestReplays[mapIndex] = []
         localStorage.setItem("bestTimes", JSON.stringify(bestTimes))
         localStorage.setItem("bestReplays", JSON.stringify(bestReplays))
-        scene = "menu"
+        finished = true
+        invalid = true
+        timing = false
+        time = 0
     }
     
     // if (inputCooldown <= 0) {
@@ -158,6 +161,7 @@ function gameTickTrue() {
 var runTime = 0
 var targetTicks = 30
 var gameDelta = 1/targetTicks
+var invalid = false
 
 var vtime = 0
 
@@ -271,12 +275,17 @@ function gameTick() {
     ctx.globalAlpha = popupAlpha
 
     ui.rect(canvas.width/2, canvas.height/2, 900*su, 600*su, [50, 50, 50, 0.7], 15*su, [255, 255, 255, 1])
-    ui.text(canvas.width/2, canvas.height/2 - 225*su, 75*su, "Complete!", {align: "center"})
+    if (!invalid) {
+        ui.text(canvas.width/2, canvas.height/2 - 225*su, 75*su, "Complete!", {align: "center"})
 
-    ui.text(canvas.width/2, canvas.height/2 - 150*su, 37.5*su, "Time: " + Math.round(time*100)/100, {align: "center"})
-    if (bestTimes[mapIndex]) {
-        ui.text(canvas.width/2, canvas.height/2 - 105*su, 37.5*su, "Best Time: " + Math.round(bestTimes[mapIndex]*100)/100, {align: "center"})
+        ui.text(canvas.width/2, canvas.height/2 - 150*su, 37.5*su, "Time: " + Math.round(time*100)/100, {align: "center"})
+        if (bestTimes[mapIndex] != -1) {
+            ui.text(canvas.width/2, canvas.height/2 - 105*su, 37.5*su, "Best Time: " + Math.round(bestTimes[mapIndex]*100)/100, {align: "center"})
+        }
+    } else {
+        ui.text(canvas.width/2, canvas.height/2 - 225*su, 75*su, "Invalid Replay", {align: "center"})
     }
+    
 
     if (finished) {
         if (mapIndex < maps.length-1) {
@@ -301,13 +310,15 @@ function gameTick() {
     }
     retryButton.draw()
 
-    replayBestButton.set(canvas.width/2, canvas.height/2 + 82.5*2*su, 300*su, 75*su)
-    replayBestButton.bgColour = [0, 0, 0, 0.5]
-    replayBestButton.textSize = 45*su
-    if (finished) {
-        replayBestButton.basic()
+    if (bestReplays[mapIndex].length > 0) {
+        replayBestButton.set(canvas.width/2, canvas.height/2 + 82.5*2*su, 300*su, 75*su)
+        replayBestButton.bgColour = [0, 0, 0, 0.5]
+        replayBestButton.textSize = 45*su
+        if (finished) {
+            replayBestButton.basic()
+        }
+        replayBestButton.draw()
     }
-    replayBestButton.draw()
 
     ctx.globalAlpha = 1
 
@@ -325,7 +336,7 @@ function gameTick() {
         loadMap(mapIndex)
         replay = false
     }
-    if (replayBestButton.hovered() && mouse.lclick && finished) {
+    if (replayBestButton.hovered() && bestReplays[mapIndex].length > 0 && mouse.lclick && finished) {
         replayBestButton.click()
         replay = true
         replayT = 0
@@ -354,5 +365,14 @@ function onFinish() {
     
         localStorage.setItem("bestTimes", JSON.stringify(bestTimes))
         localStorage.setItem("bestReplays", JSON.stringify(bestReplays))
+    } else {
+        if (Math.round(time*100)/100 != Math.round(bestTimes[mapIndex]*100)/100) {
+            bestTimes[mapIndex] = -1
+            bestReplays[mapIndex] = []
+            localStorage.setItem("bestTimes", JSON.stringify(bestTimes))
+            localStorage.setItem("bestReplays", JSON.stringify(bestReplays))
+            invalid = true
+            time = 0
+        }
     }
 }

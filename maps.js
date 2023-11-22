@@ -39,6 +39,7 @@ function loadMap(index, clearReplay=true) {
     player.vx = player.x
     player.vy = player.y
     player.vrot = player.rot
+    player.wallAngle = -1
     finished = false
     timing = false
     selected = -1
@@ -50,11 +51,12 @@ function loadMap(index, clearReplay=true) {
     lastKeys = {}
     inputs = {}
     ghostInputs = {}
+    invalid = false
 
     if (bestReplays[index]) {
         ghostReplayInputs = JSON.parse(JSON.stringify(bestReplays[index]))
     }
-    
+
     ghostReplayT = 0
     ghostPlayer.x = player.x
     ghostPlayer.y = player.y
@@ -65,6 +67,7 @@ function loadMap(index, clearReplay=true) {
     ghostPlayer.velX = 0
     ghostPlayer.velY = 0
     ghostPlayer.finished = false
+    ghostPlayer.wallAngle = -1
 
     if (clearReplay) {
         replayInputs = []

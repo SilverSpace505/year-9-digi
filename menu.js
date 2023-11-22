@@ -189,7 +189,7 @@ function menuTick() {
         if (accountOpen) signupButton.basic()
         signupButton.draw()
 
-        if (accountOpen && signupButton.hovered() && mouse.lclick) {
+        if (accountOpen && signupButton.hovered() && mouse.lclick && usernameT.text.length > 0 && passwordT.text.length >= 8) {
             aPage = "account"
             loggedIn = true
         }
