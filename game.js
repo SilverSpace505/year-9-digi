@@ -159,7 +159,7 @@ function gameTickTrue() {
 }
 
 var runTime = 0
-var targetTicks = 30
+var targetTicks = 40
 var gameDelta = 1/targetTicks
 var invalid = false
 
@@ -179,6 +179,11 @@ function gameTick() {
     //         loadMap(mapIndex, false)
     //     }
     // }
+
+    if (jKeys["KeyR"] && !replay) {
+        loadMap(mapIndex)
+        replay = false
+    }
 
     runTime += delta
     while (gameTicks < runTime*targetTicks) {
@@ -310,7 +315,7 @@ function gameTick() {
     }
     retryButton.draw()
 
-    if (bestReplays[mapIndex].length > 0) {
+    if (bestReplays[mapIndex] && bestReplays[mapIndex].length > 0) {
         replayBestButton.set(canvas.width/2, canvas.height/2 + 82.5*2*su, 300*su, 75*su)
         replayBestButton.bgColour = [0, 0, 0, 0.5]
         replayBestButton.textSize = 45*su

@@ -5,8 +5,8 @@ class Player {
     rot = 0
     velX = 0
     velY = 0
-    speed = 375
-    rotSpeed = 5
+    speed = 500
+    rotSpeed = 250
     dragRot = 0
     distance = 0
     rDistance = 0
@@ -15,11 +15,13 @@ class Player {
     vx = 0
     vy = 0
     vrot = 0
+    rotVel = 0
     vdragRot = 0
     isGhost = false
     finished = false
     wallAngle = -1
     wall = null
+    toBounce = 0
     constructor(x, y, size) {
         this.x = x
         this.y = y
@@ -28,8 +30,9 @@ class Player {
     update() {
         if (inputs["KeyW"] && !finished && !this.finished) {
             timing = true
-            this.velX -= Math.sin(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)**2/5000+1)
-            this.velY -= Math.cos(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)**2/5000+1)
+
+            this.velX -= Math.sin(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)**3/500000+1)
+            this.velY -= Math.cos(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)**3/500000+1)
             if (!this.isGhost) {
                 for (let i = 0; i < 200/targetTicks; i++) {
                     let rotOff = (Math.random()-0.5)*2 * Math.PI/2
@@ -50,12 +53,12 @@ class Player {
         if (inputs["KeyA"] && !finished && !this.finished) {
             timing = true
             if (inputs["KeyS"]) {
-                this.rot -= this.rotSpeed*gameDelta
+                this.rotVel -= this.rotSpeed*gameDelta
                 // if (this.checkCollide()) {
                 //     this.rot += this.rotSpeed*gameDelta
                 // }
             } else {
-                this.rot += this.rotSpeed*gameDelta
+                this.rotVel += this.rotSpeed*gameDelta
                 // if (this.checkCollide()) {
                 //     this.rot -= this.rotSpeed*gameDelta
                 // }
@@ -64,18 +67,21 @@ class Player {
         if (inputs["KeyD"] && !finished && !this.finished) {
             timing = true
             if (inputs["KeyS"]) {
-                this.rot += this.rotSpeed*gameDelta
+                this.rotVel += this.rotSpeed*gameDelta
                 // if (this.checkCollide()) {
                 //     this.rot -= this.rotSpeed*gameDelta
                 // }
             } else {
-                this.rot -= this.rotSpeed*gameDelta
+                this.rotVel -= this.rotSpeed*gameDelta
                 // if (this.checkCollide()) {
                 //     this.rot += this.rotSpeed*gameDelta
                 // }
             }
         }
         
+        this.rotVel = lerp(this.rotVel, 0, gameDelta*100*(1-0.9))
+        this.rot += this.rotVel * gameDelta
+        this.rotVel = 0
         this.velX = lerp(this.velX, 0, gameDelta*100*(1-0.99))
         this.velY = lerp(this.velY, 0, gameDelta*100*(1-0.99))
 
@@ -84,48 +90,72 @@ class Player {
 
         this.fixCollision()
 
-        this.x += this.velX * gameDelta
-        this.y += this.velY * gameDelta
+        let steps = 1/gameDelta
+        for (let i = 0; i < steps; i++) {
+            this.x += this.velX * gameDelta / steps
+            this.y += this.velY * gameDelta / steps
 
-        while (this.checkCollide()) {
-           // Handle collision response here
-           const penetrationDepth = 0.1;
-           let normal = { x: this.wall[3] - this.wall[1], y: this.wall[0] - this.wall[2] }; // Normal to the wall
-           const length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
-           normal.x /= length;
-           normal.y /= length;
+            if (Math.abs(angleD(this.wallAngle, this.rot)) < Math.PI/8 && this.wallAngle != -1) {
+                this.toBounce += 1
+            } else {
+                this.toBounce = 0
+            }
+            
+            if (this.checkCollide()) {
+               const penetrationDepth = 1;
+               let normal = { x: this.wall[3] - this.wall[1], y: this.wall[0] - this.wall[2] }; // Normal to the wall
+               const length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+               normal.x /= length;
+               normal.y /= length;
+               const relativePosition = {
+                   x: this.x - this.wall[0],
+                   y: this.y - this.wall[1]
+               };
+               const dotProduct = relativePosition.x * normal.x + relativePosition.y * normal.y;
+    
+               if (dotProduct < 0) {
+                   normal.x *= -1;
+                   normal.y *= -1;
+               }
+    
+               const speedAlongNormal = normal.x * this.velX + normal.y * this.velY;
+               const velXAlongNormal = normal.x * speedAlongNormal;
+               const velYAlongNormal = normal.y * speedAlongNormal;
+    
+               const friction = 1
+               const velXSliding = this.velX - velXAlongNormal * friction;
+               const velYSliding = this.velY - velYAlongNormal * friction;
+    
+               this.velX = lerp(this.velX, velXSliding, delta*5);
+               this.velY = lerp(this.velY, velYSliding, delta*5);
+    
+               this.x += normal.x * penetrationDepth;
+               this.y += normal.y * penetrationDepth;
+            } else if (this.checkCollide()) {
+                const penetrationDepth = 1;
+                let normal = { x: this.wall[3] - this.wall[1], y: this.wall[0] - this.wall[2] }; // Normal to the wall
+                const length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+                normal.x /= length;
+                normal.y /= length;
+                const relativePosition = {
+                    x: this.x - this.wall[0],
+                    y: this.y - this.wall[1]
+                };
+                const dotProduct = relativePosition.x * normal.x + relativePosition.y * normal.y;
+     
+                if (dotProduct < 0) {
+                    normal.x *= -1;
+                    normal.y *= -1;
+                }
+                
+                this.velX = lerp(this.velX, normal.x * 500, 0.9);
+                this.velY = lerp(this.velY, normal.y * 500, 0.9);
 
-           // Check if the car is on the opposite side of the normal
-           const relativePosition = {
-               x: this.x - this.wall[0],
-               y: this.y - this.wall[1]
-           };
-           const dotProduct = relativePosition.x * normal.x + relativePosition.y * normal.y;
-
-           if (dotProduct < 0) {
-               // Reverse the normal if the car is on the other side of the wall
-               normal.x *= -1;
-               normal.y *= -1;
-           }
-
-           // Calculate the new velocity components by projecting the current velocity onto the wall
-           const speedAlongNormal = normal.x * this.velX + normal.y * this.velY;
-           const velXAlongNormal = normal.x * speedAlongNormal;
-           const velYAlongNormal = normal.y * speedAlongNormal;
-
-           // Calculate the sliding effect (friction)
-           const friction = 0.9; // Adjust this value based on your preference
-           const velXSliding = this.velX - velXAlongNormal * friction;
-           const velYSliding = this.velY - velYAlongNormal * friction;
-
-           // Apply the new velocity components
-           this.velX = velXSliding;
-           this.velY = velYSliding;
-
-           // Move the car slightly away from the wall to prevent it from getting stuck
-           this.x += normal.x * penetrationDepth;
-           this.y += normal.y * penetrationDepth;
+                this.x += normal.x * penetrationDepth;
+                this.y += normal.y * penetrationDepth;
+            }
         }
+       
         // this.move(this.velX*gameDelta, this.velY*gameDelta, 1/gameDelta/10)
         
         // for (let i = 0; i < 100; i++) {

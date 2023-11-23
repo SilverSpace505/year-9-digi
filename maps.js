@@ -29,6 +29,7 @@ var mapData = []
 var mapIndex = 0
 
 function loadMap(index, clearReplay=true) {
+    if (!player) { return }
     map = maps[index].slice(0, maps[index].length-1)
     mapData = maps[index]
     player.x = mapSpawns[index].x
