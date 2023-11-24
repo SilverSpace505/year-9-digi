@@ -42,6 +42,7 @@ function loadMap(index, clearReplay=true) {
     player.vrot = player.rot
     player.wallAngle = -1
     player.wall = null
+    player.toBounce = 0
     finished = false
     timing = false
     selected = -1

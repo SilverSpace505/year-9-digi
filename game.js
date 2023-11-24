@@ -88,9 +88,11 @@ function gameTickTrue() {
         lastKeys = {...keys}
     }
 
-    if (replay && time > bestTimes[mapIndex]) {
+    if (replay && time > bestTimes[mapIndex] && time != 0 && bestTimes[mapIndex] != -1) {
+        console.log("to long!", time, bestTimes[mapIndex])
         bestTimes[mapIndex] = -1
         bestReplays[mapIndex] = []
+     
         localStorage.setItem("bestTimes", JSON.stringify(bestTimes))
         localStorage.setItem("bestReplays", JSON.stringify(bestReplays))
         finished = true
@@ -341,7 +343,7 @@ function gameTick() {
         loadMap(mapIndex)
         replay = false
     }
-    if (replayBestButton.hovered() && bestReplays[mapIndex].length > 0 && mouse.lclick && finished) {
+    if (replayBestButton.hovered() && bestReplays[mapIndex] && bestReplays[mapIndex].length > 0 && mouse.lclick && finished) {
         replayBestButton.click()
         replay = true
         replayT = 0
@@ -372,6 +374,7 @@ function onFinish() {
         localStorage.setItem("bestReplays", JSON.stringify(bestReplays))
     } else {
         if (Math.round(time*100)/100 != Math.round(bestTimes[mapIndex]*100)/100) {
+            console.log(Math.round(time*100)/100, Math.round(bestTimes[mapIndex]*100)/100)
             bestTimes[mapIndex] = -1
             bestReplays[mapIndex] = []
             localStorage.setItem("bestTimes", JSON.stringify(bestTimes))
