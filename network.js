@@ -120,3 +120,9 @@ function connectToServer() {
 }
 
 connectToServer()
+
+setInterval(() =>  {
+    if (!connected) {
+        connectToServer()
+    }
+}, 5000)

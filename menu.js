@@ -26,6 +26,14 @@ passwordT.hide = true
 var deleteAccountButton = new ui.Button(0, 0, 0, 0, "rect", "Delete Account")
 deleteAccountButton.bgColour = [255, 0, 0, 0.5]
 
+var changePasswordButton = new ui.Button(0, 0, 0, 0, "rect", "Change Password")
+var changeUsernameButton = new ui.Button(0, 0, 0, 0, "rect", "Change Username")
+changePasswordButton.bgColour = [0, 0, 0, 0.5]
+changeUsernameButton.bgColour = [0, 0, 0, 0.5]
+
+var changeButton = new ui.Button(0, 0, 0, 0, "rect", "Update")
+changeButton.bgColour = [0, 0, 0, 0.5]
+
 var aPage = "select"
 
 function menuTick() {
@@ -149,6 +157,9 @@ function menuTick() {
         passwordT.text = ""
         usernameT.text = ""
     }
+
+    usernameT.placeholder = "Username"
+    passwordT.placeholder = "Password"
 
     if (aPage == "select") {
         ui.text(canvas.width/2, canvas.height/2-250*su, 50*su, "Account", {align: "center"})
@@ -307,8 +318,69 @@ function menuTick() {
         if (closeButton.hovered() && !accountLoading && mouse.lclick && accountOpen) {
             accountOpen = false
         }
+
+        changeUsernameButton.set(canvas.width/2, canvas.height/2 - 30*su, 300*su, 50*su)
+        changeUsernameButton.textSize = 25*su
+        
+        if (accountOpen) changeUsernameButton.basic()
+        changeUsernameButton.draw()
+
+        if (changeUsernameButton.hovered() && !accountLoading && mouse.lclick && accountOpen) {
+            aPage = "changeUser"
+        }
+
+        changePasswordButton.set(canvas.width/2, canvas.height/2 + 30*su, 300*su, 50*su)
+        changePasswordButton.textSize = 25*su
+        
+        if (accountOpen) changePasswordButton.basic()
+        changePasswordButton.draw()
+
+        if (changePasswordButton.hovered() && !accountLoading && mouse.lclick && accountOpen) {
+            aPage = "changePass"
+        }
+    } else if (aPage == "changePass") {
+        ui.text(canvas.width/2, canvas.height/2-250*su, 40*su, "Change Password", {align: "center"})
+
+        passwordT.set(canvas.width/2, canvas.height/2 - 30*su, 350*su, 50*su)
+        passwordT.placeholder = "New password"
+        passwordT.outlineSize = 10*su
+        if (accountOpen) passwordT.hover()
+        passwordT.draw()
+
+        changeButton.set(canvas.width/2, canvas.height/2 + 30*su, 350*su, 50*su)
+        changeButton.textSize = 35*su
+        if (accountOpen) changeButton.basic()
+        changeButton.draw()
+
+        if (accountOpen && mouse.lclick && !accountLoading && changeButton.hovered()) {
+            // changeButton.click()
+            // account.password = passwordT.text
+        }
+
+        closeButton.set(canvas.width/2, canvas.height/2 + 250*su, 300*su, 50*su)
+        closeButton.textSize = 35*su
+        closeButton.text = "Back"
+        
+        if (accountOpen) closeButton.basic()
+        closeButton.draw()
+
+        if (closeButton.hovered() && !accountLoading && mouse.lclick && accountOpen) {
+            aPage = "account"
+        }
+    } else if (aPage == "changeUser") {
+        ui.text(canvas.width/2, canvas.height/2-250*su, 40*su, "Change Username", {align: "center"})
+
+        closeButton.set(canvas.width/2, canvas.height/2 + 250*su, 300*su, 50*su)
+        closeButton.textSize = 35*su
+        closeButton.text = "Back"
+        
+        if (accountOpen) closeButton.basic()
+        closeButton.draw()
+
+        if (closeButton.hovered() && !accountLoading && mouse.lclick && accountOpen) {
+            aPage = "account"
+        }
     }
-    
 
     ctx.globalAlpha = 1
 }

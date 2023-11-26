@@ -134,6 +134,9 @@ input.checkInputs = (event) => {
         passwordT.checkFocus(event)
     }
 
+    if (scene == "menu" && accountOpen && aPage == "changePass") {
+        passwordT.checkFocus(event)
+    }  
 
     if (!input.focused) {
 		input.getInput.blur()
