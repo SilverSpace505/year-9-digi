@@ -122,6 +122,13 @@ function menuTick() {
     ctx.arc(canvas.width - 70*su, 70*su, 50*su*accountButtonMul, 0, Math.PI*2)
     ctx.stroke()
 
+    msgShow -= delta
+
+    if (msgShow > 0) {
+        msgA = lerp(msgA, 1, delta*10)
+    } else {
+        msgA = lerp(msgA, 0, delta*5)
+    }
 
     if (accountOpen) {
         accountA = lerp(accountA, 1, delta*10)
@@ -133,6 +140,10 @@ function menuTick() {
 
     ui.rect(canvas.width/2, canvas.height/2, canvas.width, canvas.height, [0, 0, 0, 0.5])
     ui.rect(canvas.width/2, canvas.height/2, 450*su, 600*su, [127, 127, 127, 0.75], 10*su, [255, 255, 255, 1])
+
+    ctx.globalAlpha = msgA
+    ui.text(canvas.width/2, canvas.height-125*su, 35*su, msgText, {align: "center"})
+    ctx.globalAlpha = accountA
 
     if (aPage != "signup" && aPage != "login") {
         passwordT.text = ""
@@ -177,6 +188,9 @@ function menuTick() {
     } else if (aPage == "signup") {
         ui.text(canvas.width/2, canvas.height/2-250*su, 50*su, "Sign Up", {align: "center"})
 
+        usernameT.text = usernameT.text.substring(0, 15)
+        passwordT.text = passwordT.text.substring(0, 15)
+
         usernameT.set(canvas.width/2, canvas.height/2-(30+65)*su, 300*su, 50*su)
         usernameT.outlineSize = 10*su
         usernameT.hover()
@@ -196,6 +210,8 @@ function menuTick() {
         if (accountOpen && !accountLoading && signupButton.hovered() && mouse.lclick && usernameT.text.length > 0 && passwordT.text.length >= 8) {
             sendMsg({"signup": {username: usernameT.text, password: passwordT.text}})
             accountloading = true
+        } else if (accountOpen && !accountLoading && signupButton.hovered() && mouse.lclick && usernameT.text.length > 0) {
+            showMsg("Password needs to be 8 characters long")
         }
 
         closeButton.set(canvas.width/2, canvas.height/2 + 250*su, 300*su, 75*su)
@@ -212,6 +228,9 @@ function menuTick() {
 
     } else if (aPage == "login") {
         ui.text(canvas.width/2, canvas.height/2-250*su, 50*su, "Login", {align: "center"})
+
+        usernameT.text = usernameT.text.substring(0, 15)
+        passwordT.text = passwordT.text.substring(0, 15)
 
         usernameT.set(canvas.width/2, canvas.height/2-(30+65)*su, 300*su, 50*su)
         usernameT.outlineSize = 10*su
@@ -245,8 +264,14 @@ function menuTick() {
             aPage = "select"
         }
     } else if (aPage == "account") {
+        let width = ui.measureText(35*su, username).width
+        let usernameSize = 35*su * (400*su / width)
+        if (usernameSize > 35*su) {
+            usernameSize = 35*su
+        }
         ui.text(canvas.width/2, canvas.height/2-250*su, 50*su, "Account", {align: "center"})
-        ui.text(canvas.width/2, canvas.height/2-200*su, 35*su, username, {align: "center"})
+        ui.text(canvas.width/2, canvas.height/2-230*su+usernameSize, usernameSize, username, {align: "center"})
+        
 
         logoutButton.set(canvas.width/2, canvas.height/2 + 130*su, 300*su, 50*su)
         logoutButton.textSize = 35*su
