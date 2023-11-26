@@ -102,57 +102,57 @@ class Player {
             }
             
             if (this.checkCollide()) {
-               const penetrationDepth = 1;
-               let normal = { x: this.wall[3] - this.wall[1], y: this.wall[0] - this.wall[2] }; // Normal to the wall
-               const length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
-               normal.x /= length;
-               normal.y /= length;
+               const penetrationDepth = 1
+               let normal = { x: this.wall[3] - this.wall[1], y: this.wall[0] - this.wall[2] }
+               const length = Math.sqrt(normal.x * normal.x + normal.y * normal.y)
+               normal.x /= length
+               normal.y /= length
                const relativePosition = {
                    x: this.x - this.wall[0],
                    y: this.y - this.wall[1]
-               };
-               const dotProduct = relativePosition.x * normal.x + relativePosition.y * normal.y;
+               }
+               const dotProduct = relativePosition.x * normal.x + relativePosition.y * normal.y
     
                if (dotProduct < 0) {
-                   normal.x *= -1;
-                   normal.y *= -1;
+                   normal.x *= -1
+                   normal.y *= -1
                }
     
-               const speedAlongNormal = normal.x * this.velX + normal.y * this.velY;
-               const velXAlongNormal = normal.x * speedAlongNormal;
-               const velYAlongNormal = normal.y * speedAlongNormal;
+               const speedAlongNormal = normal.x * this.velX + normal.y * this.velY
+               const velXAlongNormal = normal.x * speedAlongNormal
+               const velYAlongNormal = normal.y * speedAlongNormal
     
                const friction = 1
-               const velXSliding = this.velX - velXAlongNormal * friction;
-               const velYSliding = this.velY - velYAlongNormal * friction;
+               const velXSliding = this.velX - velXAlongNormal * friction
+               const velYSliding = this.velY - velYAlongNormal * friction
     
-               this.velX = lerp(this.velX, velXSliding, delta*5);
-               this.velY = lerp(this.velY, velYSliding, delta*5);
+               this.velX = lerp(this.velX, velXSliding, gameDelta)
+               this.velY = lerp(this.velY, velYSliding, gameDelta)
     
-               this.x += normal.x * penetrationDepth;
-               this.y += normal.y * penetrationDepth;
+               this.x += normal.x * penetrationDepth
+               this.y += normal.y * penetrationDepth
             } else if (this.checkCollide()) {
-                const penetrationDepth = 1;
-                let normal = { x: this.wall[3] - this.wall[1], y: this.wall[0] - this.wall[2] }; // Normal to the wall
-                const length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
-                normal.x /= length;
-                normal.y /= length;
+                const penetrationDepth = 1
+                let normal = { x: this.wall[3] - this.wall[1], y: this.wall[0] - this.wall[2] }
+                const length = Math.sqrt(normal.x * normal.x + normal.y * normal.y)
+                normal.x /= length
+                normal.y /= length
                 const relativePosition = {
                     x: this.x - this.wall[0],
                     y: this.y - this.wall[1]
-                };
-                const dotProduct = relativePosition.x * normal.x + relativePosition.y * normal.y;
+                }
+                const dotProduct = relativePosition.x * normal.x + relativePosition.y * normal.y
      
                 if (dotProduct < 0) {
-                    normal.x *= -1;
-                    normal.y *= -1;
+                    normal.x *= -1
+                    normal.y *= -1
                 }
                 
-                this.velX = lerp(this.velX, normal.x * 500, 0.9);
-                this.velY = lerp(this.velY, normal.y * 500, 0.9);
+                this.velX = lerp(this.velX, normal.x * 500, 0.9)
+                this.velY = lerp(this.velY, normal.y * 500, 0.9)
 
-                this.x += normal.x * penetrationDepth;
-                this.y += normal.y * penetrationDepth;
+                this.x += normal.x * penetrationDepth
+                this.y += normal.y * penetrationDepth
             }
         }
        

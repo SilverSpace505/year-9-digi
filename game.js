@@ -303,7 +303,7 @@ function gameTick() {
     }
     nextLevelButton.set(canvas.width/2, canvas.height/2, 300*su, 75*su)
     nextLevelButton.bgColour = [0, 0, 0, 0.5]
-    nextLevelButton.textSize = 52.5*su
+    nextLevelButton.textSize = 45*su
     if (finished) {
         nextLevelButton.basic()
     }
@@ -311,7 +311,7 @@ function gameTick() {
 
     retryButton.set(canvas.width/2, canvas.height/2 + 82.5*su, 300*su, 75*su)
     retryButton.bgColour = [0, 0, 0, 0.5]
-    retryButton.textSize = 52.5*su
+    retryButton.textSize = 45*su
     if (finished) {
         retryButton.basic()
     }
@@ -320,7 +320,7 @@ function gameTick() {
     if (bestReplays[mapIndex] && bestReplays[mapIndex].length > 0) {
         replayBestButton.set(canvas.width/2, canvas.height/2 + 82.5*2*su, 300*su, 75*su)
         replayBestButton.bgColour = [0, 0, 0, 0.5]
-        replayBestButton.textSize = 45*su
+        replayBestButton.textSize = 40*su
         if (finished) {
             replayBestButton.basic()
         }

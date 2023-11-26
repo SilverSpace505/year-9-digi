@@ -129,7 +129,7 @@ input.checkInputs = (event) => {
 		input.focused = null
 	}
 
-    if (scene == "menu" && accountOpen && aPage == "signup") {
+    if (scene == "menu" && accountOpen && (aPage == "signup" || aPage == "login")) {
         usernameT.checkFocus(event)
         passwordT.checkFocus(event)
     }
