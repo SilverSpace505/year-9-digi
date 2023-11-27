@@ -111,6 +111,17 @@ function connectToServer() {
             localStorage.setItem("account", JSON.stringify({username: null, account: {}}))
             showMsg("Not logged in")
         }
+        if ("delete" in msg) {
+            username = null
+            account = {}
+            accountLoading = false
+            aPage = "select"
+            showMsg("Deleted Account")
+        }
+        if ("update" in msg) {
+            showMsg("Updated Password")
+            accountLoading = false
+        }
     })
 
     ws.addEventListener("close", (event) => {
