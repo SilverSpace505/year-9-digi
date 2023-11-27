@@ -92,9 +92,10 @@ function gameTickTrue() {
         console.log("to long!", time, bestTimes[mapIndex])
         bestTimes[mapIndex] = -1
         bestReplays[mapIndex] = []
-     
-        localStorage.setItem("bestTimes", JSON.stringify(bestTimes))
-        localStorage.setItem("bestReplays", JSON.stringify(bestReplays))
+        
+        account.bestTimes = bestTimes
+        account.bestReplays = bestReplays
+        sendMsg({update: account})
         finished = true
         invalid = true
         timing = false

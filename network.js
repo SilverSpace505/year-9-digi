@@ -55,6 +55,15 @@ function connectToServer() {
             // console.log("Account created", msg.accountCreated[0], msg.accountCreated[1])
             username = msg.accountCreated[0]
             account = msg.accountCreated[1]
+            if (!account.bestTimes) {
+                account.bestTimes = bestTimes
+            }
+            if (!account.bestReplays) {
+                account.bestReplays = bestReplays
+            }
+            bestTimes = account.bestTimes
+            bestReplays = account.bestReplays
+            sendMsg({update: account})
             accountLoading = false
             aPage = "account"
             localStorage.setItem("account", JSON.stringify({username: username, account: account}))
@@ -70,6 +79,13 @@ function connectToServer() {
             // console.log("Logged In", msg.loggedIn[0], msg.loggedIn[1])
             username = msg.loggedIn[0]
             account = msg.loggedIn[1]
+            if (!account.bestTimes) {
+                account.bestTimes = []
+            }
+            if (!account.bestReplays) {
+                account.bestReplays = []
+            }
+            sendMsg({update: account})
             accountLoading = false
             aPage = "account"
             localStorage.setItem("account", JSON.stringify({username: username, account: account}))
