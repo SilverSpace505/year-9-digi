@@ -70,7 +70,7 @@ function leaderboardTick() {
         ui.rect(450*su, i*35*su + 30*su, 850*su, 30*su, [0, 0, 0, 0.5])
         ui.text(35*su, i*35*su + 30*su, 30*su, (i+1).toString())
         ui.text(450*su, i*35*su + 30*su, 30*su, leaderboard[i][0], {align: "center"})
-        ui.text(900*su-35*su, i*35*su + 30*su, 30*su, leaderboard[i][1].toString(), {align: "right"})
+        ui.text(900*su-35*su, i*35*su + 30*su, 30*su, (Math.round(leaderboard[i][1]*100)/100).toString(), {align: "right"})
     }
 
     leaderboardC.drawBorder(10*su, [255, 255, 255, 1])
