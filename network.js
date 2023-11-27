@@ -62,8 +62,6 @@ function connectToServer() {
         }
         if ("accountExists" in msg) {
             // console.log("Account already exists", msg.accountExists)
-            username = null
-            account = {}
             accountLoading = false
             localStorage.setItem("account", JSON.stringify({username: null, account: {}}))
             showMsg("Account already exists")
@@ -111,16 +109,23 @@ function connectToServer() {
             localStorage.setItem("account", JSON.stringify({username: null, account: {}}))
             showMsg("Not logged in")
         }
-        if ("delete" in msg) {
+        if ("deleted" in msg) {
             username = null
             account = {}
             accountLoading = false
             aPage = "select"
-            showMsg("Deleted Account")
+            localStorage.setItem("account", JSON.stringify({username: null, account: {}}))
+            showMsg("Deleted account")
         }
         if ("update" in msg) {
-            showMsg("Updated Password")
+            showMsg("Updated password")
             accountLoading = false
+        }
+        if ("changed" in msg) {
+            username = msg.changed
+            accountLoading = false
+            localStorage.setItem("account", JSON.stringify({username: username, account: account}))
+            showMsg("Updated username")
         }
     })
 

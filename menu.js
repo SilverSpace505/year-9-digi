@@ -405,6 +405,23 @@ function menuTick() {
     } else if (aPage == "changeUser") {
         ui.text(canvas.width/2, canvas.height/2-250*su, 40*su, "Change Username", {align: "center"})
 
+        usernameT.set(canvas.width/2, canvas.height/2 - 30*su, 350*su, 50*su)
+        usernameT.placeholder = "New Username"
+        usernameT.outlineSize = 10*su
+        if (accountOpen) usernameT.hover()
+        usernameT.draw()
+
+        changeButton.set(canvas.width/2, canvas.height/2 + 30*su, 350*su, 50*su)
+        changeButton.textSize = 35*su
+        if (accountOpen) changeButton.basic()
+        changeButton.draw()
+
+        if (accountOpen && mouse.lclick && !accountLoading && changeButton.hovered() && usernameT.text.length > 0) {
+            changeButton.click()
+            accountLoading = true
+            sendMsg({change: usernameT.text})
+        }
+
         closeButton.set(canvas.width/2, canvas.height/2 + 250*su, 300*su, 50*su)
         closeButton.textSize = 35*su
         closeButton.text = "Back"
