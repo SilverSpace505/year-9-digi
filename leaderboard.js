@@ -66,6 +66,8 @@ function leaderboardTick() {
 
     ui.setC(leaderboardC)
 
+    // it's kinda tricky sometimes to upload these changes to github pages.
+    // lol that's funny, i'll remove this later.
     for (let i = 0; i < leaderboard.length; i++) {
         ui.rect(450*su, i*35*su + 30*su, 850*su, 30*su, [0, 0, 0, 0.5])
         ui.text(35*su, i*35*su + 30*su, 30*su, (i+1).toString())
