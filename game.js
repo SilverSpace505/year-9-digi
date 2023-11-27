@@ -234,7 +234,7 @@ function gameTick() {
     if (finished) { timing = false }
 
     // ui.textShadow.multiply = 0.75
-    vtime = lerp(vtime, time, delta*20)
+    vtime = Math.ceil(lerp(vtime, time, delta*20)*10000)/10000
     ui.text(50*su, 50*su, 50*su, `TIME: ${Math.round(vtime*100)/100}`)
 
     menuButton.set(canvas.width - 170*su, (75/2+20)*su, 300*su, 75*su)
