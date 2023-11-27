@@ -78,6 +78,7 @@ function menuTick() {
     if (leaderboardButton.hovered() && !accountOpen && mouse.lclick) {
         leaderboardButton.click()
         scene = "leaderboard"
+        sLeaderboard = 0
     }
 
     if (!connected) {

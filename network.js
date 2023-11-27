@@ -12,6 +12,8 @@ var accountLoading = false
 
 var queue = []
 
+var leaderboard = []
+
 var cKeys = ["KeyW", "KeyS", "KeyA", "KeyD", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]
 
 function sendMsg(sendData, bypass=false) {
@@ -216,6 +218,13 @@ function connectToServer() {
         }
         if ("invalidUpdate" in msg) {
             accountLoading = false
+        }
+        if ("leaderboard" in msg) {
+            // console.log("Leaderboard: " + msg.leaderboard)
+            leaderboard = msg.leaderboard
+            // for (let score of msg.leaderboard) {
+            //     console.log(score[0], score[1])
+            // }
         }
     })
 

@@ -19,6 +19,8 @@ var scene = "menu"
 
 var menuPlayer = new Player(100, 0, 0.25)
 
+var leaderboardRefresh = 0
+
 ui.textShadow.bottom = "auto"
 
 utils.setGlobals()
@@ -59,6 +61,8 @@ function update(timestamp) {
 	if (su > h / targetSize.y) {
 		su = h / targetSize.y
 	}
+
+    leaderboardRefresh -= delta
 
     camera.zoom = lerp(camera.zoom, zoomT*su, delta*10)
 
