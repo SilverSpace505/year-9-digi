@@ -28,7 +28,7 @@ class Player {
         this.size = size
     }
     update() {
-        if (inputs["KeyW"] && !finished && !this.finished) {
+        if ((inputs["KeyW"] || inputs["ArrowUp"]) && !finished && !this.finished) {
             timing = true
 
             this.velX -= Math.sin(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)**3/500000+1)
@@ -45,12 +45,12 @@ class Player {
                 }
             }
         }
-        if (inputs["KeyS"] && !finished && !this.finished) {
+        if ((inputs["KeyS"] || inputs["ArrowDown"]) && !finished && !this.finished) {
             timing = true
             this.velX += Math.sin(this.rot)*this.speed/2*gameDelta
             this.velY += Math.cos(this.rot)*this.speed/2*gameDelta
         }
-        if (inputs["KeyA"] && !finished && !this.finished) {
+        if ((inputs["KeyA"] || inputs["ArrowLeft"]) && !finished && !this.finished) {
             timing = true
             if (inputs["KeyS"]) {
                 this.rotVel -= this.rotSpeed*gameDelta
@@ -64,7 +64,7 @@ class Player {
                 // }
             }
         }
-        if (inputs["KeyD"] && !finished && !this.finished) {
+        if ((inputs["KeyD"] || inputs["ArrowRight"]) && !finished && !this.finished) {
             timing = true
             if (inputs["KeyS"]) {
                 this.rotVel += this.rotSpeed*gameDelta
@@ -393,7 +393,7 @@ class Player {
         ctx.fillStyle = "blue"
         ctx.fill()
         
-        if ((Math.abs(this.velX)+Math.abs(this.velY))/2 > 25 && (!inputs["KeyS"] || scene != "game")) {
+        if ((Math.abs(this.velX)+Math.abs(this.velY))/2 > 25 && (!(inputs["KeyS"] || inputs["ArrowDown"]) || scene != "game")) {
             ctx.beginPath()
         
             ctx.moveTo((this.vx-camera.x)*camera.zoom+canvas.width/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.vrot).x, (this.vy-camera.y)*camera.zoom+canvas.height/2 + rv2(100*this.size*camera.zoom, 85*this.size*camera.zoom, this.vrot).y)

@@ -36,20 +36,21 @@ var ghostInputs = []
 
 var fps = 0
 
+var tooLong = false
+var accountFull = false
+
 function gameTickTrue() {
 
     if (!finished && timing) {
         timeInTicks++
     }
-    // if (finished) {
-    //     console.log(timeInTicks)
-    // }
 
     let oldInputs = JSON.parse(JSON.stringify(inputs))
     inputs = JSON.parse(JSON.stringify(ghostInputs))
 
     if (ghostReplayInputs && ghostReplayInputs.length > 0 && timing && !replay) {
         ghostReplayT += gameDelta
+        ghostReplayT = Math.round(ghostReplayT*1000)/1000
         while (ghostReplayInputs.length > 0 && ghostReplayInputs[0][2] < ghostReplayT) {
             inputs[ghostReplayInputs[0][1]] = ghostReplayInputs[0][0]
             if (!inputs[ghostReplayInputs[0][1]]) {
@@ -68,6 +69,7 @@ function gameTickTrue() {
     if (!replay && !finished) {
         if (timing) {
             replayT += gameDelta
+            replayT = Math.round(replayT*1000)/1000
         } else {
             replayT = 0
         }
@@ -79,56 +81,31 @@ function gameTickTrue() {
         }
     
         for (let key in keys) {
-            if (!(key in lastKeys)) {
+            if (cKeys.includes(key) && !(key in lastKeys)) {
                 inputs[key] = true
                 replayInputs.push([true, key, replayT])
             }
         }
         
-        lastKeys = {...keys}
+        lastKeys = {...inputs}
     }
 
-    if (replay && time > bestTimes[mapIndex] && time != 0 && bestTimes[mapIndex] != -1) {
-        console.log("to long!", time, bestTimes[mapIndex])
-        bestTimes[mapIndex] = -1
-        bestReplays[mapIndex] = []
-        
-        account.bestTimes = bestTimes
-        account.bestReplays = bestReplays
-        sendMsg({update: account})
+    if (replay && time > account.bestTimes[mapIndex] && time != 0 && account.bestTimes[mapIndex] != -1) {
+        account.bestTimes[mapIndex] = -1
+        account.bestReplays[mapIndex] = []
+        saveData()
         finished = true
         invalid = true
         timing = false
         time = 0
     }
-    
-    // if (inputCooldown <= 0) {
-    //     if (replay) {
-    //         console.log(replayI)
-    //         if (finished && replayI < replayInputs.length) {
-    //             console.log("Run Invalid", replayI, ">", replayInputs.length)
-    //             replay = false
-    //         }
-    //         inputs = {...replayInputs[replayI]}
-    //         replayI++
-    //         if (replayI >= replayInputs.length) {
-    //             if (!finished) {
-    //                 console.log("Run Invalid", replayI-1, "<", replayInputs.length)
-    //             }
-    //             replayI = 0
-    //             replay = false
-    //         }
-    //     } else if (!finished) {
-    //         inputs = {...keys}
-    //         if (timing) {
-    //             replayInputs.push({...keys})
-    //         }
-    //     }
-    //     if (timing) {
-    //         inputCooldown = 1/20
-    //     }
-    // }
-    // inputCooldown -= delta
+
+    if (!replay && (time >= 100 || replayInputs.length > 100)) {
+        tooLong = true
+        finished = true
+        timing = false
+        time = 0
+    }
 
     player.update()
 
@@ -144,10 +121,12 @@ function gameTickTrue() {
 
     if (timing) {
         time += gameDelta
+        time = Math.round(time*1000)/1000
     }
 
     if (replay && replayInputsC.length > 0) {
         replayT += gameDelta
+        replayT = Math.round(replayT*1000)/1000
         while (replayInputsC.length > 0 && replayInputsC[0][2] < replayT) {
             inputs[replayInputsC[0][1]] = replayInputsC[0][0]
             if (!inputs[replayInputsC[0][1]]) {
@@ -169,7 +148,7 @@ var invalid = false
 var vtime = 0
 
 setInterval(() => {
-    console.log(fps)
+    // console.log(fps)
     fps = 0
 }, 1000)
 
@@ -244,7 +223,7 @@ function gameTick() {
         particles[i].draw()
     }
 
-    if (bestReplays[mapIndex] && bestReplays[mapIndex].length > 0 && (timing || finished) && !replay) {
+    if (account.bestReplays[mapIndex] && account.bestReplays[mapIndex].length > 0 && (timing || finished) && !replay) {
         ctx.globalAlpha = 0.25
         ghostPlayer.draw()
         ctx.globalAlpha = 1
@@ -283,15 +262,21 @@ function gameTick() {
     ctx.globalAlpha = popupAlpha
 
     ui.rect(canvas.width/2, canvas.height/2, 900*su, 600*su, [50, 50, 50, 0.7], 15*su, [255, 255, 255, 1])
-    if (!invalid) {
-        ui.text(canvas.width/2, canvas.height/2 - 225*su, 75*su, "Complete!", {align: "center"})
-
-        ui.text(canvas.width/2, canvas.height/2 - 150*su, 37.5*su, "Time: " + Math.round(time*100)/100, {align: "center"})
-        if (bestTimes[mapIndex] != -1) {
-            ui.text(canvas.width/2, canvas.height/2 - 105*su, 37.5*su, "Best Time: " + Math.round(bestTimes[mapIndex]*100)/100, {align: "center"})
-        }
-    } else {
+    if (invalid) {
         ui.text(canvas.width/2, canvas.height/2 - 225*su, 75*su, "Invalid Replay", {align: "center"})
+        ui.text(canvas.width/2, canvas.height/2 - 150*su, 30*su, "Replay detected as invalid", {align: "center", wrap: 500*su})
+    } else if (tooLong) {
+        ui.text(canvas.width/2, canvas.height/2 - 225*su, 75*su, "Too Slow", {align: "center"})
+        ui.text(canvas.width/2, canvas.height/2 - 150*su, 30*su, "You either took longer than 100s or pressed too many buttons.", {align: "center", wrap: 500*su})
+    } else if (accountFull) {
+        ui.text(canvas.width/2, canvas.height/2 - 225*su, 75*su, "Account Full", {align: "center"})
+        ui.text(canvas.width/2, canvas.height/2 - 150*su, 30*su, "Try pressing less buttons in your runs.", {align: "center", wrap: 500*su})
+    } else {
+        ui.text(canvas.width/2, canvas.height/2 - 225*su, 75*su, "Complete!", {align: "center"})
+        ui.text(canvas.width/2, canvas.height/2 - 150*su, 37.5*su, "Time: " + Math.round(time*100)/100, {align: "center"})
+        if (mapIndex < account.bestTimes.length && account.bestTimes[mapIndex] != -1) {
+            ui.text(canvas.width/2, canvas.height/2 - 105*su, 37.5*su, "Best Time: " + Math.round(account.bestTimes[mapIndex]*100)/100, {align: "center"})
+        }
     }
     
 
@@ -318,7 +303,7 @@ function gameTick() {
     }
     retryButton.draw()
 
-    if (bestReplays[mapIndex] && bestReplays[mapIndex].length > 0) {
+    if (account.bestReplays[mapIndex] && account.bestReplays[mapIndex].length > 0) {
         replayBestButton.set(canvas.width/2, canvas.height/2 + 82.5*2*su, 300*su, 75*su)
         replayBestButton.bgColour = [0, 0, 0, 0.5]
         replayBestButton.textSize = 40*su
@@ -344,12 +329,12 @@ function gameTick() {
         loadMap(mapIndex)
         replay = false
     }
-    if (replayBestButton.hovered() && bestReplays[mapIndex] && bestReplays[mapIndex].length > 0 && mouse.lclick && finished) {
+    if (replayBestButton.hovered() && account.bestReplays[mapIndex] && account.bestReplays[mapIndex].length > 0 && mouse.lclick && finished) {
         replayBestButton.click()
         replay = true
         replayT = 0
         inputs = {}
-        replayInputs = JSON.parse(JSON.stringify(bestReplays[mapIndex]))
+        replayInputs = JSON.parse(JSON.stringify(account.bestReplays[mapIndex]))
         replayInputsC = JSON.parse(JSON.stringify(replayInputs))
         loadMap(mapIndex, false)
     }
@@ -360,26 +345,27 @@ function onFinish() {
     finished = true
     timing = false
 
+    while (replayInputs.length > 100 && !replay) {
+        replayInputs.splice(replayInputs.length-1, 1)
+    }
+
     if (!replay) {
-        while (mapIndex >= bestTimes.length) {
-            bestTimes.push(-1)
-            bestReplays.push([])
+        while (mapIndex >= account.bestTimes.length) {
+            account.bestTimes.push(-1)
+            account.bestReplays.push([])
         }
     
-        if (time < bestTimes[mapIndex] || bestTimes[mapIndex] == -1) {
-            bestTimes[mapIndex] = time
-            bestReplays[mapIndex] = JSON.parse(JSON.stringify(replayInputs))
+        if (time < account.bestTimes[mapIndex] || account.bestTimes[mapIndex] == -1) {
+            account.bestTimes[mapIndex] = time
+            account.bestReplays[mapIndex] = JSON.parse(JSON.stringify(replayInputs))
+            saveData()
         }
     
-        localStorage.setItem("bestTimes", JSON.stringify(bestTimes))
-        localStorage.setItem("bestReplays", JSON.stringify(bestReplays))
     } else {
-        if (Math.round(time*100)/100 != Math.round(bestTimes[mapIndex]*100)/100) {
-            console.log(Math.round(time*100)/100, Math.round(bestTimes[mapIndex]*100)/100)
-            bestTimes[mapIndex] = -1
-            bestReplays[mapIndex] = []
-            localStorage.setItem("bestTimes", JSON.stringify(bestTimes))
-            localStorage.setItem("bestReplays", JSON.stringify(bestReplays))
+        if (Math.round(time*100)/100 != Math.round(account.bestTimes[mapIndex]*100)/100) {
+            account.bestTimes[mapIndex] = -1
+            account.bestReplays[mapIndex] = []
+            saveData()
             invalid = true
             time = 0
         }
