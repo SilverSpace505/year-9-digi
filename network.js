@@ -256,6 +256,7 @@ function connectToServer() {
             scene = "game"
             replay = true
             camera.zoom = su*1.5
+            popupAlpha = 0
             leaderboardReplay = true
             loadMap(sLeaderboard, false)
         }
@@ -263,7 +264,7 @@ function connectToServer() {
 
     ws.addEventListener("close", (event) => {
 		console.log("Disconnected from server")
-        connectToServer()
+        connected = false
 	})
 }
 

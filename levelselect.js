@@ -41,6 +41,7 @@ function levelSelectTick() {
             camera.zoom = su*1.5
             leaderboardReplay = false
             scene = "game"
+            popupAlpha = 0
         }
 
         // if (!unlocked) {
