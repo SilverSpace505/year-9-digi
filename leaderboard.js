@@ -99,8 +99,8 @@ function leaderboardTick() {
         let iconSize = 1
         if (hovered) {
             iconSize = 0.9
-            if (mouse.ldown && !accountLoading) {
-                iconSize = 0.8
+            if (mouse.ldown) {
+                iconSize = 0.7
             }
             if (mouse.lclick && !accountLoading) {
                 accountLoading = true
