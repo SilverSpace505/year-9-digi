@@ -66,8 +66,7 @@ function leaderboardTick() {
 
     ui.setC(leaderboardC)
 
-    // it's kinda tricky sometimes to upload these changes to github pages.
-    // lol that's funny, i'll remove this later.
+    // lol i had to replace this
     let place = 0
     let lastScore = -1
     for (let i = 0; i < leaderboard.length; i++) {
