@@ -68,9 +68,17 @@ function leaderboardTick() {
 
     // it's kinda tricky sometimes to upload these changes to github pages.
     // lol that's funny, i'll remove this later.
+    let place = 0
+    let lastScore = -1
     for (let i = 0; i < leaderboard.length; i++) {
+        if (Math.round(leaderboard[i][1]*100)/100 > lastScore || lastScore == -1) {
+            place = i+1
+        } else if (i > 0) {
+            ui.rect(450*su, i*35*su + 30*su, 850*su, 30*su, [0, 0, 0, 0.5])
+        }
+        lastScore = Math.round(leaderboard[i][1]*100)/100
         ui.rect(450*su, i*35*su + 30*su, 850*su, 30*su, [0, 0, 0, 0.5])
-        ui.text(35*su, i*35*su + 30*su, 30*su, (i+1).toString())
+        ui.text(35*su, i*35*su + 30*su, 30*su, place.toString())
         ui.text(450*su, i*35*su + 30*su, 30*su, leaderboard[i][0], {align: "center"})
         ui.text(900*su-35*su, i*35*su + 30*su, 30*su, (Math.round(leaderboard[i][1]*100)/100).toString(), {align: "right"})
     }

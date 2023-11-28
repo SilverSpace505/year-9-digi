@@ -35,13 +35,13 @@ function update(timestamp) {
 
     document.body.style.cursor = "default"
 
-    if (jKeys["KeyE"] && !typing) {
-        if (scene == "editor") {
-            scene = "game"
-        } else {
-            scene = 'editor'
-        }
-    }
+    // if (jKeys["KeyE"] && !typing) {
+    //     if (scene == "editor") {
+    //         scene = "game"
+    //     } else {
+    //         scene = 'editor'
+    //     }
+    // }
 
     if (ws.readyState != WebSocket.OPEN) {
         connected = false
