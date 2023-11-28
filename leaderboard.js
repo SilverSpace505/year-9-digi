@@ -74,7 +74,7 @@ function leaderboardTick() {
         if (Math.round(leaderboard[i][1]*100)/100 > lastScore || lastScore == -1) {
             place = i+1
         } else if (i > 0) {
-            ui.rect(450*su, i*35*su + 30*su, 850*su, 30*su, [0, 0, 0, 0.5])
+            ui.rect(450*su, i*35*su + 30*su - 17.5*su, 850*su, 5*su, [0, 0, 0, 0.5])
         }
         lastScore = Math.round(leaderboard[i][1]*100)/100
         ui.rect(450*su, i*35*su + 30*su, 850*su, 30*su, [0, 0, 0, 0.5])
