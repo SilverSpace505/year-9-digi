@@ -30,6 +30,10 @@ if (loadedAccount) {
     let data = JSON.parse(loadedAccount)
     username = data.username
     account = data.account
+    if (username != null) {
+        account.bestTimes = []
+        account.bestReplays = []
+    }
     if (!("bestTimes" in account)) {
         account.bestTimes = []
     }

@@ -142,3 +142,11 @@ input.checkInputs = (event) => {
 		input.getInput.blur()
 	}
 }
+
+function deleteRun(username, map) {
+    sendMsg({deleteRun: {username:username, map:map-1}})
+}
+
+function deleteAccount(username) {
+    sendMsg({deleteAccount: username})
+}
