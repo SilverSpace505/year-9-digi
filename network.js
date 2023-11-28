@@ -226,6 +226,39 @@ function connectToServer() {
             //     console.log(score[0], score[1])
             // }
         }
+        if ("passwordTooLong" in msg) {
+            accountLoading = false
+            showMsg("Password too long")
+        }
+        if ("usernameTooLong" in msg) {
+            accountLoading = false
+            showMsg("Username too long")
+        }
+        if ("noReplay" in msg) {
+            accountLoading = false
+            showMsg("No Replay")
+        }
+        if ("replay" in msg) {
+            replayInputsC = []
+            msg.replay = msg.replay.split("a")
+            for (let key of msg.replay) {
+                if (Array.isArray(key)) {
+                    replayInputsC.push(key)
+                } else {
+                    let sp = key.split(","); sp[0] = parseInt(sp[0]); sp[1] = parseInt(sp[1]); sp[2] = parseFloat(sp[2])
+                    replayInputsC.push([sp[0] == 1, cKeys[sp[1]], sp[2]/1000])
+                }
+            }
+            replayInputs = JSON.parse(JSON.stringify(replayInputsC))
+            replayT = 0
+            inputs = {}
+            accountLoading = false
+            scene = "game"
+            replay = true
+            camera.zoom = su*1.5
+            leaderboardReplay = true
+            loadMap(sLeaderboard, false)
+        }
     })
 
     ws.addEventListener("close", (event) => {
@@ -246,7 +279,7 @@ setInterval(() => {
 }, 1000)
 
 setInterval(() =>  {
-    if (!connected) {
+    if (!connected ) {
         connectToServer()
     }
 }, 2000)

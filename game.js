@@ -39,6 +39,10 @@ var fps = 0
 var tooLong = false
 var accountFull = false
 
+var leaderboardReplay = false
+
+var expected = 0
+
 function gameTickTrue() {
 
     if (!finished && timing) {
@@ -90,10 +94,12 @@ function gameTickTrue() {
         lastKeys = {...inputs}
     }
 
-    if (replay && time > account.bestTimes[mapIndex] && time != 0 && account.bestTimes[mapIndex] != -1) {
-        account.bestTimes[mapIndex] = -1
-        account.bestReplays[mapIndex] = []
-        saveData()
+    if (replay && time > expected && time != 0 && expected != -1) {
+        if (!leaderboardReplay) {
+            account.bestTimes[mapIndex] = -1
+            account.bestReplays[mapIndex] = []
+            saveData()
+        }
         finished = true
         invalid = true
         timing = false
@@ -274,69 +280,85 @@ function gameTick() {
     } else {
         ui.text(canvas.width/2, canvas.height/2 - 225*su, 75*su, "Complete!", {align: "center"})
         ui.text(canvas.width/2, canvas.height/2 - 150*su, 37.5*su, "Time: " + Math.round(time*100)/100, {align: "center"})
-        if (mapIndex < account.bestTimes.length && account.bestTimes[mapIndex] != -1) {
+        if (!leaderboardReplay && mapIndex < account.bestTimes.length && account.bestTimes[mapIndex] != -1) {
             ui.text(canvas.width/2, canvas.height/2 - 105*su, 37.5*su, "Best Time: " + Math.round(account.bestTimes[mapIndex]*100)/100, {align: "center"})
         }
     }
     
-
-    if (finished) {
-        if (mapIndex < maps.length-1) {
-            nextLevelButton.text = "Next Level"
-        } else {
-            nextLevelButton.text = "Restart"
-        }
-    }
-    nextLevelButton.set(canvas.width/2, canvas.height/2, 300*su, 75*su)
-    nextLevelButton.bgColour = [0, 0, 0, 0.5]
-    nextLevelButton.textSize = 45*su
-    if (finished) {
-        nextLevelButton.basic()
-    }
-    nextLevelButton.draw()
-
-    retryButton.set(canvas.width/2, canvas.height/2 + 82.5*su, 300*su, 75*su)
-    retryButton.bgColour = [0, 0, 0, 0.5]
-    retryButton.textSize = 45*su
-    if (finished) {
-        retryButton.basic()
-    }
-    retryButton.draw()
-
-    if (account.bestReplays[mapIndex] && account.bestReplays[mapIndex].length > 0) {
-        replayBestButton.set(canvas.width/2, canvas.height/2 + 82.5*2*su, 300*su, 75*su)
-        replayBestButton.bgColour = [0, 0, 0, 0.5]
-        replayBestButton.textSize = 40*su
+    if (!leaderboardReplay) {
         if (finished) {
-            replayBestButton.basic()
+            if (mapIndex < maps.length-1) {
+                nextLevelButton.text = "Next Level"
+            } else {
+                nextLevelButton.text = "Restart"
+            }
         }
-        replayBestButton.draw()
-    }
-
-    ctx.globalAlpha = 1
-
-    if (nextLevelButton.hovered() && mouse.lclick && finished) {
-        nextLevelButton.click()
-        if (mapIndex < maps.length-1) {
-            loadMap(mapIndex+1)
-        } else {
-            loadMap(0)
+        nextLevelButton.set(canvas.width/2, canvas.height/2, 300*su, 75*su)
+        nextLevelButton.bgColour = [0, 0, 0, 0.5]
+        nextLevelButton.textSize = 45*su
+        if (finished) {
+            nextLevelButton.basic()
         }
-        replay = false
-    }
-    if (retryButton.hovered() && mouse.lclick && finished) {
-        retryButton.click()
-        loadMap(mapIndex)
-        replay = false
-    }
-    if (replayBestButton.hovered() && account.bestReplays[mapIndex] && account.bestReplays[mapIndex].length > 0 && mouse.lclick && finished) {
-        replayBestButton.click()
-        replay = true
-        replayT = 0
-        inputs = {}
-        replayInputs = JSON.parse(JSON.stringify(account.bestReplays[mapIndex]))
-        replayInputsC = JSON.parse(JSON.stringify(replayInputs))
-        loadMap(mapIndex, false)
+        nextLevelButton.draw()
+    
+        retryButton.set(canvas.width/2, canvas.height/2 + 82.5*su, 300*su, 75*su)
+        retryButton.bgColour = [0, 0, 0, 0.5]
+        retryButton.textSize = 45*su
+        retryButton.text = "Retry"
+        if (finished) {
+            retryButton.basic()
+        }
+        retryButton.draw()
+    
+        if (account.bestReplays[mapIndex] && account.bestReplays[mapIndex].length > 0) {
+            replayBestButton.set(canvas.width/2, canvas.height/2 + 82.5*2*su, 300*su, 75*su)
+            replayBestButton.bgColour = [0, 0, 0, 0.5]
+            replayBestButton.textSize = 40*su
+            if (finished) {
+                replayBestButton.basic()
+            }
+            replayBestButton.draw()
+        }
+    
+        ctx.globalAlpha = 1
+    
+        if (nextLevelButton.hovered() && mouse.lclick && finished) {
+            nextLevelButton.click()
+            if (mapIndex < maps.length-1) {
+                loadMap(mapIndex+1)
+            } else {
+                loadMap(0)
+            }
+            replay = false
+        }
+        if (retryButton.hovered() && mouse.lclick && finished) {
+            retryButton.click()
+            loadMap(mapIndex)
+            replay = false
+        }
+        if (replayBestButton.hovered() && account.bestReplays[mapIndex] && account.bestReplays[mapIndex].length > 0 && mouse.lclick && finished) {
+            replayBestButton.click()
+            replay = true
+            replayT = 0
+            inputs = {}
+            replayInputs = JSON.parse(JSON.stringify(account.bestReplays[mapIndex]))
+            replayInputsC = JSON.parse(JSON.stringify(replayInputs))
+            expected = account.bestTimes[mapIndex]
+            loadMap(mapIndex, false)
+        }
+    } else {
+        retryButton.set(canvas.width/2, canvas.height/2, 300*su, 75*su)
+        retryButton.bgColour = [0, 0, 0, 0.5]
+        retryButton.textSize = 45*su
+        retryButton.text = "Back"
+        if (finished) {
+            retryButton.basic()
+        }
+        retryButton.draw()
+        if (retryButton.hovered() && mouse.lclick && finished) {
+            retryButton.click()
+            scene = "leaderboard"
+        }
     }
 }
 
@@ -362,10 +384,12 @@ function onFinish() {
         }
     
     } else {
-        if (Math.round(time*100)/100 != Math.round(account.bestTimes[mapIndex]*100)/100) {
-            account.bestTimes[mapIndex] = -1
-            account.bestReplays[mapIndex] = []
-            saveData()
+        if (Math.round(time*100)/100 != Math.round(expected*100)/100) {
+            if (!leaderboardReplay) {
+                account.bestTimes[mapIndex] = -1
+                account.bestReplays[mapIndex] = []
+                saveData()
+            }
             invalid = true
             time = 0
         }

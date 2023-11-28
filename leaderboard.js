@@ -24,7 +24,7 @@ function leaderboardTick() {
         ctx.strokeStyle = "white"
         ctx.stroke()
 
-        if (prevButton.hovered() && mouse.lclick) {
+        if (prevButton.hovered() && mouse.lclick && !accountLoading) {
             prevButton.click()
             sLeaderboard -= 1
             leaderboardRefresh = 0
@@ -45,7 +45,7 @@ function leaderboardTick() {
         ctx.strokeStyle = "white"
         ctx.stroke()
 
-        if (nextButton.hovered() && mouse.lclick) {
+        if (nextButton.hovered() && mouse.lclick && !accountLoading) {
             nextButton.click()
             sLeaderboard += 1
             leaderboardRefresh = 0
@@ -69,17 +69,56 @@ function leaderboardTick() {
     // lol i had to replace this
     let place = 0
     let lastScore = -1
+    let placeColour = [0, 0, 0, 0.5]
+    let group = 0
     for (let i = 0; i < leaderboard.length; i++) {
+        
         if (Math.round(leaderboard[i][1]*100)/100 > lastScore || lastScore == -1) {
             place = i+1
+            group += 1
         } else if (i > 0) {
-            ui.rect(450*su, i*35*su + 30*su - 17.5*su, 850*su, 5*su, [0, 0, 0, 0.5])
+            ui.rect(450*su, i*35*su + 30*su - 17.5*su, 850*su, 5*su, placeColour)
+        }
+        if (group == 1) {
+            placeColour = [219, 172, 52, 0.5]
+        } else if (group == 2) {
+            placeColour = [150, 150, 150, 0.5]
+        } else if (group == 3) {
+            placeColour = [205, 127, 50, 0.5]
+        } else {
+            placeColour = [0, 0, 0, 0.5]
         }
         lastScore = Math.round(leaderboard[i][1]*100)/100
-        ui.rect(450*su, i*35*su + 30*su, 850*su, 30*su, [0, 0, 0, 0.5])
+        ui.rect(450*su, i*35*su + 30*su, 850*su, 30*su, placeColour)
         ui.text(35*su, i*35*su + 30*su, 30*su, place.toString())
         ui.text(450*su, i*35*su + 30*su, 30*su, leaderboard[i][0], {align: "center"})
-        ui.text(900*su-35*su, i*35*su + 30*su, 30*su, (Math.round(leaderboard[i][1]*100)/100).toString(), {align: "right"})
+        ui.text(900*su-35*su-25*su, i*35*su + 30*su, 30*su, (Math.round(leaderboard[i][1]*100)/100).toString(), {align: "right"})
+
+        let hovered = ui.hovered(900*su-41.25*su + leaderboardC.x-leaderboardC.width/2, i*35*su + 30*su + leaderboardC.y-leaderboardC.height/2, 27.5*su, 27.5*su)
+
+        let iconSize = 1
+        if (hovered) {
+            iconSize = 0.9
+            if (mouse.ldown && !accountLoading) {
+                iconSize = 0.8
+            }
+            if (mouse.lclick && !accountLoading) {
+                accountLoading = true
+                expected = leaderboard[i][1]
+                sendMsg({replay: {username: leaderboard[i][0], map: sLeaderboard}})
+            }
+        } else {
+            iconSize = 1
+        }
+        ctx.beginPath()
+        ctx.ellipse(900*su-41.25*su + leaderboardC.x-leaderboardC.width/2, i*35*su + 30*su + leaderboardC.y-leaderboardC.height/2, 12.5*su*iconSize, 7.5*su*iconSize, 0, 0, Math.PI*2)
+        ctx.strokeStyle = "white"
+        ctx.lineWidth = 5*su*iconSize
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.arc(900*su-41.25*su + leaderboardC.x-leaderboardC.width/2, i*35*su + 30*su + leaderboardC.y-leaderboardC.height/2, 5*su*iconSize, 0, Math.PI*2)
+        ctx.fillStyle = "white"
+        ctx.fill()
     }
 
     leaderboardC.drawBorder(10*su, [255, 255, 255, 1])

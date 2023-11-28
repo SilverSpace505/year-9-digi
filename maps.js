@@ -76,7 +76,7 @@ function loadMap(index, clearReplay=true) {
     ghostPlayer.wall = null
 
     if (clearReplay) {
-        replayInputs = []
+      replayInputs = []
     }
     mapIndex = index
 }
