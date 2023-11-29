@@ -42,10 +42,6 @@ function update(timestamp) {
     //         scene = 'editor'
     //     }
     // }
-
-    if (ws.readyState != WebSocket.OPEN) {
-        connected = false
-    }
     
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight

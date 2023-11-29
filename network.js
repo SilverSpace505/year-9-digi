@@ -48,6 +48,8 @@ var msgA = 0
 var msgShow = 0
 var msgText = ""
 
+var serverLoggedIn = false
+
 var oldAccount = {}
 
 function saveData() {
@@ -68,7 +70,7 @@ function saveData() {
         return
     }
     localStorage.setItem("account", JSON.stringify({username: username, account: cAccount}))
-    if (username != null) {
+    if (username != null && serverLoggedIn) {
         sendMsg({update: cAccount})
     }
     oldAccount = JSON.parse(JSON.stringify(account))
@@ -134,6 +136,7 @@ function connectToServer() {
                 account.bestReplays = last.bestReplays
             }
             accountLoading = false
+            serverLoggedIn = true
             aPage = "account"
             saveData()
             // showMsg("Account created")
@@ -157,6 +160,7 @@ function connectToServer() {
             }
             uncompressReplays()
             accountLoading = false
+            serverLoggedIn = true
             aPage = "account"
             saveData()
             // showMsg("Logged in")
@@ -189,6 +193,7 @@ function connectToServer() {
             }
             accountLoading = false
             aPage = "select"
+            serverLoggedIn = false
             saveData()
             // showMsg("Logged out")
         }
@@ -199,6 +204,7 @@ function connectToServer() {
                 account = {bestTimes: [], bestReplays: []}
             }
             accountLoading = false
+            serverLoggedIn = false
             aPage = "select"
             saveData()
             showMsg("Not logged in")
@@ -210,6 +216,7 @@ function connectToServer() {
             }
             accountLoading = false
             aPage = "select"
+            serverLoggedIn = false
             saveData()
             showMsg("Deleted account")
         }
@@ -291,7 +298,7 @@ setInterval(() => {
 }, 1000)
 
 setInterval(() =>  {
-    if (!connected ) {
+    if (!connected || (ws.readyState != WebSocket.OPEN && ws.readyState != WebSocket.CONNECTING)) {
         connectToServer()
     }
-}, 3000)
+}, 2000)
