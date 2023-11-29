@@ -129,7 +129,6 @@ function connectToServer() {
             if (!("bestReplays" in account)) {
                 account.bestReplays = last.bestReplays
             }
-            uncompressReplays()
             accountLoading = false
             aPage = "account"
             saveData()

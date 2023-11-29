@@ -229,7 +229,7 @@ function gameTick() {
         particles[i].draw()
     }
 
-    if (account.bestReplays[mapIndex] && account.bestReplays[mapIndex].length > 0 && (timing || finished) && !replay) {
+    if (account.bestReplays[mapIndex] && account.bestReplays[mapIndex].length > 0 && (timing || finished) && !replay && account.bestReplays[mapIndex][0][1] != null) {
         ctx.globalAlpha = 0.25
         ghostPlayer.draw()
         ctx.globalAlpha = 1
