@@ -77,15 +77,19 @@ function saveData() {
 function uncompressReplays() {
     let uncReplays = []
     for (let replay of account.bestReplays) {
-        replay = replay.split("a")
-        uncReplays.push([])
-        for (let key of replay) {
-            if (Array.isArray(key)) {
-                uncReplays.push(key)
-            } else {
-                let sp = key.split(","); sp[0] = parseInt(sp[0]); sp[1] = parseInt(sp[1]); sp[2] = parseFloat(sp[2])
-                uncReplays[uncReplays.length-1].push([sp[0] == 1, cKeys[sp[1]], sp[2]/1000])
+        if (!Array.isArray(replay)) {
+            replay = replay.split("a")
+            uncReplays.push([])
+            for (let key of replay) {
+                if (Array.isArray(key)) {
+                    uncReplays.push(key)
+                } else {
+                    let sp = key.split(","); sp[0] = parseInt(sp[0]); sp[1] = parseInt(sp[1]); sp[2] = parseFloat(sp[2])
+                    uncReplays[uncReplays.length-1].push([sp[0] == 1, cKeys[sp[1]], sp[2]/1000])
+                }
             }
+        } else {
+            uncReplays.push(replay)
         }
     }
     account.bestReplays = uncReplays
@@ -243,14 +247,18 @@ function connectToServer() {
         }
         if ("replay" in msg) {
             replayInputsC = []
-            msg.replay = msg.replay.split("a")
-            for (let key of msg.replay) {
-                if (Array.isArray(key)) {
-                    replayInputsC.push(key)
-                } else {
-                    let sp = key.split(","); sp[0] = parseInt(sp[0]); sp[1] = parseInt(sp[1]); sp[2] = parseFloat(sp[2])
-                    replayInputsC.push([sp[0] == 1, cKeys[sp[1]], sp[2]/1000])
+            if (!Array.isArray(msg.replay)) {
+                msg.replay = msg.replay.split("a")
+                for (let key of msg.replay) {
+                    if (Array.isArray(key)) {
+                        replayInputsC.push(key)
+                    } else {
+                        let sp = key.split(","); sp[0] = parseInt(sp[0]); sp[1] = parseInt(sp[1]); sp[2] = parseFloat(sp[2])
+                        replayInputsC.push([sp[0] == 1, cKeys[sp[1]], sp[2]/1000])
+                    }
                 }
+            } else {
+                replayInputsC = msg.replay
             }
             replayInputs = JSON.parse(JSON.stringify(replayInputsC))
             replayT = 0
@@ -286,4 +294,4 @@ setInterval(() =>  {
     if (!connected ) {
         connectToServer()
     }
-}, 2000)
+}, 3000)
