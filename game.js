@@ -48,27 +48,6 @@ function gameTickTrue() {
     if (!finished && timing) {
         timeInTicks++
     }
-
-    let oldInputs = JSON.parse(JSON.stringify(inputs))
-    inputs = JSON.parse(JSON.stringify(ghostInputs))
-
-    if (ghostReplayInputs && ghostReplayInputs.length > 0 && timing && !replay) {
-        ghostReplayT += gameDelta
-        ghostReplayT = Math.round(ghostReplayT*1000)/1000
-        while (ghostReplayInputs.length > 0 && ghostReplayInputs[0][2] < ghostReplayT) {
-            inputs[ghostReplayInputs[0][1]] = ghostReplayInputs[0][0]
-            if (!inputs[ghostReplayInputs[0][1]]) {
-                delete inputs[ghostReplayInputs[0][1]]
-            }
-            ghostReplayInputs.splice(0, 1)
-        }
-    }
-
-    ghostPlayer.update()
-
-    ghostInputs = JSON.parse(JSON.stringify(inputs))
-
-    inputs = oldInputs
     
     if (!replay && !finished) {
         if (timing) {
@@ -114,6 +93,27 @@ function gameTickTrue() {
     }
 
     player.update()
+
+    let oldInputs = JSON.parse(JSON.stringify(inputs))
+    inputs = JSON.parse(JSON.stringify(ghostInputs))
+
+    if (ghostReplayInputs && ghostReplayInputs.length > 0 && timing && !replay) {
+        ghostReplayT += gameDelta
+        ghostReplayT = Math.round(ghostReplayT*1000)/1000
+        while (ghostReplayInputs.length > 0 && ghostReplayInputs[0][2] < ghostReplayT) {
+            inputs[ghostReplayInputs[0][1]] = ghostReplayInputs[0][0]
+            if (!inputs[ghostReplayInputs[0][1]]) {
+                delete inputs[ghostReplayInputs[0][1]]
+            }
+            ghostReplayInputs.splice(0, 1)
+        }
+    }
+
+    ghostPlayer.update()
+
+    ghostInputs = JSON.parse(JSON.stringify(inputs))
+
+    inputs = oldInputs
 
     for (let i = 0; i < particles.length; i++) {
         particles[i].move()
