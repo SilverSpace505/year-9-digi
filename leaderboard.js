@@ -64,6 +64,8 @@ function leaderboardTick() {
     leaderboardC.set(canvas.width/2, canvas.height/2+50*su, 900*su, 500*su)
     leaderboardC.draw()
 
+    leaderboardC.bounds.minY = -leaderboard.length*35*su-25*su + 500*su
+
     ui.setC(leaderboardC)
 
     // lol i had to replace this
@@ -94,10 +96,10 @@ function leaderboardTick() {
         ui.text(450*su, i*35*su + 30*su, 30*su, leaderboard[i][0], {align: "center"})
         ui.text(900*su-35*su-25*su, i*35*su + 30*su, 30*su, (Math.round(leaderboard[i][1]*100)/100).toString(), {align: "right"})
 
-        let hovered = ui.hovered(900*su-41.25*su + leaderboardC.x-leaderboardC.width/2, i*35*su + 30*su + leaderboardC.y-leaderboardC.height/2, 27.5*su, 27.5*su)
+        let hovered = ui.hovered(900*su-41.25*su + leaderboardC.x-leaderboardC.width/2, i*35*su + 30*su + leaderboardC.y-leaderboardC.height/2+leaderboardC.off.y, 27.5*su, 27.5*su)
 
         let iconSize = 1
-        if (hovered) {
+        if (hovered && leaderboardC.hovered()) {
             iconSize = 0.9
             if (mouse.ldown) {
                 iconSize = 0.7
@@ -111,17 +113,18 @@ function leaderboardTick() {
             iconSize = 1
         }
         ctx.beginPath()
-        ctx.ellipse(900*su-41.25*su + leaderboardC.x-leaderboardC.width/2, i*35*su + 30*su + leaderboardC.y-leaderboardC.height/2, 12.5*su*iconSize, 7.5*su*iconSize, 0, 0, Math.PI*2)
+        ctx.ellipse(900*su-41.25*su + leaderboardC.x-leaderboardC.width/2, i*35*su + 30*su + leaderboardC.y-leaderboardC.height/2 + leaderboardC.off.y, 12.5*su*iconSize, 7.5*su*iconSize, 0, 0, Math.PI*2)
         ctx.strokeStyle = "white"
         ctx.lineWidth = 5*su*iconSize
         ctx.stroke()
         ctx.beginPath()
-        ctx.arc(900*su-41.25*su + leaderboardC.x-leaderboardC.width/2, i*35*su + 30*su + leaderboardC.y-leaderboardC.height/2, 5*su*iconSize, 0, Math.PI*2)
+        ctx.arc(900*su-41.25*su + leaderboardC.x-leaderboardC.width/2, i*35*su + 30*su + leaderboardC.y-leaderboardC.height/2 + leaderboardC.off.y, 5*su*iconSize, 0, Math.PI*2)
         ctx.fillStyle = "white"
         ctx.fill()
     }
 
     leaderboardC.drawBorder(10*su, [255, 255, 255, 1])
+    leaderboardC.drawScroll({x: 10*su, y: 10*su}, 10*su)
     ui.setC()
     
     backButton.set(canvas.width/2, canvas.height-100*su, 300*su, 75*su)

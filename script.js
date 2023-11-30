@@ -139,6 +139,14 @@ input.checkInputs = (event) => {
 	}
 }
 
+input.scroll = (x, y) => {
+    if (scene == "leaderboard" && leaderboardC.hovered()) {
+        leaderboardC.off.x -= x
+        leaderboardC.off.y -= y
+        leaderboardC.update()
+    }
+}
+
 function deleteRun(username, map) {
     sendMsg({deleteRun: {username:username, map:map-1}})
 }
