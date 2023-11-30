@@ -66,6 +66,12 @@ function leaderboardTick() {
 
     leaderboardC.bounds.minY = -leaderboard.length*35*su-25*su + 500*su
 
+    if (leaderboardC.bounds.minY > 0) {
+        leaderboardC.bounds.minY = 0
+    }
+
+    leaderboardC.update()
+
     ui.setC(leaderboardC)
 
     // lol i had to replace this
