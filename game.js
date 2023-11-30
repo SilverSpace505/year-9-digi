@@ -147,7 +147,7 @@ function gameTickTrue() {
 }
 
 var runTime = 0
-var targetTicks = 1000
+var targetTicks = 40
 var gameDelta = 1/targetTicks
 var invalid = false
 
