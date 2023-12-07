@@ -1,10 +1,10 @@
 
 var sLeaderboard = 0
 
-var leaderboardC = new ui.Canvas(0, 0, 0, 0, [64, 64, 64, 0.5])
+var leaderboardC = new ui.Canvas([64, 64, 64, 0.5])
 
-var nextButton = new ui.Button(0, 0, 0, 0, "rect", "")
-var prevButton = new ui.Button(0, 0, 0, 0, "rect", "")
+var nextButton = new ui.Button("rect", "")
+var prevButton = new ui.Button("rect", "")
 nextButton.bgColour = [127, 127, 127, 0.5]
 prevButton.bgColour = [127, 127, 127, 0.5]
 

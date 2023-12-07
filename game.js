@@ -8,10 +8,10 @@ var finished = false
 
 var popupAlpha = 0
 
-var nextLevelButton = new ui.Button(0, 0, 0, 0, "rect", "Next Level")
-var retryButton = new ui.Button(0, 0, 0, 0, "rect", "Retry")
-var replayBestButton = new ui.Button(0, 0, 0, 0, "rect", "Replay Best")
-var menuButton = new ui.Button(0, 0, 0, 0, "rect", "Menu")
+var nextLevelButton = new ui.Button("rect", "Next Level")
+var retryButton = new ui.Button("rect", "Retry")
+var replayBestButton = new ui.Button("rect", "Replay Best")
+var menuButton = new ui.Button("rect", "Menu")
 nextLevelButton.hoverMul = 0.925
 retryButton.hoverMul = 0.925
 

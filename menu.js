@@ -1,7 +1,7 @@
 
-var playButton = new ui.Button(0, 0, 0, 0, "rect", "Play")
-var instructionsButton = new ui.Button(0, 0, 0, 0, "rect", "Instructions")
-var leaderboardButton = new ui.Button(0, 0, 0, 0, "rect", "Leaderboard")
+var playButton = new ui.Button("rect", "Play")
+var instructionsButton = new ui.Button("rect", "Instructions")
+var leaderboardButton = new ui.Button("rect", "Leaderboard")
 // var playButton = new ui.Button(0, 0, 0, 0, "rect", "Play")
 // var playButton = new ui.Button(0, 0, 0, 0, "rect", "Play")
 
@@ -10,31 +10,31 @@ var accountButtonDown = 0
 var accountOpen = false
 var accountA = 0
 
-var closeButton = new ui.Button(0, 0, 0, 0, "rect", "Close")
+var closeButton = new ui.Button("rect", "Close")
 closeButton.bgColour = [255, 0, 0, 0.5]
 
-var loginButton = new ui.Button(0, 0, 0, 0, "rect", "Login")
+var loginButton = new ui.Button("rect", "Login")
 loginButton.bgColour = [0, 0, 0, 0.5]
-var signupButton = new ui.Button(0, 0, 0, 0, "rect", "Sign Up")
+var signupButton = new ui.Button("rect", "Sign Up")
 signupButton.bgColour = [0, 0, 0, 0.5]
 
-var logoutButton = new ui.Button(0, 0, 0, 0, "rect", "Logout")
+var logoutButton = new ui.Button("rect", "Logout")
 logoutButton.bgColour = [255, 0, 0, 0.5]
-var usernameT = new ui.TextBox(0, 0, 0, 0, "Username")
-var passwordT = new ui.TextBox(0, 0, 0, 0, "Password")
+var usernameT = new ui.TextBox("Username")
+var passwordT = new ui.TextBox("Password")
 passwordT.hide = true
-var deleteAccountButton = new ui.Button(0, 0, 0, 0, "rect", "Delete Account")
+var deleteAccountButton = new ui.Button("rect", "Delete Account")
 deleteAccountButton.bgColour = [255, 0, 0, 0.5]
 
-var changePasswordButton = new ui.Button(0, 0, 0, 0, "rect", "Change Password")
-var changeUsernameButton = new ui.Button(0, 0, 0, 0, "rect", "Change Username")
+var changePasswordButton = new ui.Button("rect", "Change Password")
+var changeUsernameButton = new ui.Button("rect", "Change Username")
 changePasswordButton.bgColour = [0, 0, 0, 0.5]
 changeUsernameButton.bgColour = [0, 0, 0, 0.5]
 
-var changeButton = new ui.Button(0, 0, 0, 0, "rect", "Update")
+var changeButton = new ui.Button("rect", "Update")
 changeButton.bgColour = [0, 0, 0, 0.5]
 
-var showButton = new ui.Button(0, 0, 0, 0, "rect", "Show")
+var showButton = new ui.Button("rect", "Show")
 showButton.bgColour = [0, 0, 0, 0.5]
 
 var showPass = false

@@ -1,5 +1,5 @@
 
-var backButton = new ui.Button(0, 0, 0, 0, "rect", "Back")
+var backButton = new ui.Button("rect", "Back")
 backButton.bgColour = [255, 0, 0, 0.5]
 
 function instructionsTick() {

@@ -5,7 +5,7 @@ function levelSelectTick() {
     ui.text(canvas.width/2, 100*su, 100*su, "Levels", {align: "center"})
 
     while (lvlButtons.length < maps.length) {
-        lvlButtons.push(new ui.Button(0, 0, 0, 0, "rect", "1"))
+        lvlButtons.push(new ui.Button("rect", "1"))
     }
     while (lvlButtons.length > maps.length) {
         lvlButtons.splice(maps.length-1, 1)
