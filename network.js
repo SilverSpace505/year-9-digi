@@ -222,6 +222,7 @@ function connectToServer() {
         }
         if ("update" in msg) {
             showMsg("Updated password")
+            account = msg.update
             accountLoading = false
         }
         if ("changed" in msg) {

@@ -388,9 +388,11 @@ function menuTick() {
 
         if (accountOpen && mouse.lclick && !accountLoading && changeButton.hovered() && passwordT.text.length > 0) {
             changeButton.click()
-            account.password = passwordT.text
             accountLoading = true
+            let oldPass = account.password
+            account.password = passwordT.text
             sendMsg({updateA: account})
+            account.password = oldPass
         }
 
         closeButton.set(canvas.width/2, canvas.height/2 + 250*su, 300*su, 50*su)
