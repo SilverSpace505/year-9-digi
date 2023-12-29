@@ -112,18 +112,21 @@ function connectToServer() {
 		}
     }
     connected = false
-	ws = new WebSocket("wss://speedwing.glitch.me")
+	ws = new WebSocket("wss://server.silverspace.online")
 
     ws.addEventListener("open", (event) => {
-        connected = true
-        console.log("Connected")
-        if (username != null) {
-            sendMsg({"login": {username: username, password: account.password}})
-        }
+        sendMsg({connect: "speedwing"}, true)
     })
 
     ws.addEventListener("message", (event) => {
         var msg = JSON.parse(event.data)
+        if ("connected" in msg) {
+            connected = true
+            console.log("Connected")
+            if (username != null) {
+                sendMsg({"login": {username: username, password: account.password}})
+            }
+        }
         if ("accountCreated" in msg) {
             // console.log("Account created", msg.accountCreated[0], msg.accountCreated[1])
             let last = JSON.parse(JSON.stringify(account))

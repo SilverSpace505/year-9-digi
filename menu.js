@@ -96,6 +96,9 @@ function menuTick() {
         ctx.lineWidth = 5*su
         ctx.strokeStyle = "white"
         ctx.stroke()
+        if (aPage == "account") {
+            aPage = "select"
+        }
     } else {
         ui.text(canvas.width - 70*su - 60*su, 70*su, 27.5*su, username, {align: "right"})
     }
