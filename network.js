@@ -52,6 +52,18 @@ var serverLoggedIn = false
 
 var oldAccount = {}
 
+var id = ""
+var idLoaded = localStorage.getItem("id")
+var letters = "abcdefghijklmnopqrstuvABCDEFGHIJKLMNOPQRS0123456789"
+if (idLoaded) {
+	id = idLoaded
+} else {
+	for (let i = 0; i < 8; i++) {
+		id += letters[Math.round(Math.random()*(letters.length-1))]
+	}
+	localStorage.setItem("id", id)
+}
+
 function saveData() {
     
     let compressedReplays = []
@@ -104,6 +116,10 @@ function showMsg(msg, time=2) {
     msgShow = time
 }
 
+function getViews() {
+	ws.send(JSON.stringify({getViews: true}))
+}
+
 function connectToServer() {
     console.log("Connecting...")
     if (ws) {
@@ -123,9 +139,13 @@ function connectToServer() {
         if ("connected" in msg) {
             connected = true
             console.log("Connected")
+            sendMsg({view: id})
             if (username != null) {
                 sendMsg({"login": {username: username, password: account.password}})
             }
+        }
+        if ("views" in msg) {
+            console.log(JSON.stringify(msg.views))
         }
         if ("accountCreated" in msg) {
             // console.log("Account created", msg.accountCreated[0], msg.accountCreated[1])
