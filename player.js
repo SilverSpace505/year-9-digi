@@ -34,6 +34,7 @@ class Player {
             this.velX -= Math.sin(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)**3/500000+1)
             this.velY -= Math.cos(this.rot)*this.speed*gameDelta * ((this.maxDistance - this.rDistance)**3/500000+1)
             if (!this.isGhost) {
+                if (mobile) targetTicks *= 5
                 for (let i = 0; i < 200/targetTicks; i++) {
                     let rotOff = (Math.random()-0.5)*2 * Math.PI/2
                     particles.push(new Particle(this.x, this.y, 
@@ -43,6 +44,7 @@ class Player {
                     particles[particles.length-1].size = (this.maxDistance-this.rDistance)/this.maxDistance*2.5
                     particles[particles.length-1].fromGhost = this.isGhost
                 }
+                if (mobile) targetTicks /= 5
             }
         }
         if ((inputs["KeyS"] || inputs["ArrowDown"]) && !finished && !this.finished) {
