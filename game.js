@@ -66,7 +66,7 @@ function gameTickTrue() {
             }
             
         }
-        if (forward >= 5) {
+        if (forward >= 8) {
             keys["KeyW"] = true
         }
     }
