@@ -120,6 +120,7 @@ function getViews() {
 	ws.send(JSON.stringify({getViews: true}))
 }
 
+var wConnect = false
 function connectToServer() {
     console.log("Connecting...")
     if (ws) {
@@ -144,7 +145,7 @@ function connectToServer() {
                 sendMsg({"login": {username: username, password: account.password}})
             }
         }
-        if ("ping" in msg) {
+        if ("ping" in msg && !document.hidden) {
             sendMsg({ping: true})
         }
         if ("views" in msg) {
@@ -310,6 +311,7 @@ function connectToServer() {
     ws.addEventListener("close", (event) => {
 		console.log("Disconnected from server")
         connected = false
+        wConnect = true
 	})
 }
 
@@ -323,9 +325,3 @@ setInterval(() => {
         }
     }
 }, 1000)
-
-setInterval(() =>  {
-    if (!connected || (ws.readyState != WebSocket.OPEN && ws.readyState != WebSocket.CONNECTING)) {
-        connectToServer()
-    }
-}, 2000)

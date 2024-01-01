@@ -48,6 +48,11 @@ function update(timestamp) {
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
+    if (wConnect && !document.hidden) {
+        wConnect = false
+        connectToServer()
+    }
+
     var w = window.innerWidth
 	var h = window.innerHeight
 
