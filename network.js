@@ -144,6 +144,9 @@ function connectToServer() {
                 sendMsg({"login": {username: username, password: account.password}})
             }
         }
+        if ("ping" in msg) {
+            sendMsg({ping: true})
+        }
         if ("views" in msg) {
             console.log(JSON.stringify(msg.views))
         }
