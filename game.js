@@ -43,11 +43,35 @@ var leaderboardReplay = false
 
 var expected = 0
 
+var forward = 0
+
 function gameTickTrue() {
 
     if (!finished && timing) {
         timeInTicks++
     }
+
+    if (mobile) {
+        delete keys["KeyA"]
+        delete keys["KeyD"]
+        delete keys["KeyW"]
+        for (let touch in input.touches) {
+            if (input.touches[touch].x > canvas.width/2) {
+                keys["KeyD"] = true
+                if (forward == 0) forward = 1
+            }
+            if (input.touches[touch].x < canvas.width/2) {
+                keys["KeyA"] = true
+                if (forward == 0) forward = 1
+            }
+            
+        }
+        if (forward >= 5) {
+            keys["KeyW"] = true
+        }
+    }
+
+    if (forward > 0) forward += 1
     
     if (!replay && !finished) {
         if (timing) {

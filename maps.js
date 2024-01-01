@@ -57,6 +57,7 @@ function loadMap(index, clearReplay=true) {
     invalid = false
     tooLong = false
     accountFull = false
+    forward = 0
 
     if (account.bestReplays[index]) {
         ghostReplayInputs = JSON.parse(JSON.stringify(account.bestReplays[index]))
