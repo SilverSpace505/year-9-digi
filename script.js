@@ -2,6 +2,8 @@ var canvas = document.getElementById("canvas")
 var ctx = canvas.getContext("2d")
 ctx.off = {x: 0, y: 0}
 
+utils.setStyles()
+
 var particles = []
 
 var player = new Player(200, 200, 0.25)
@@ -42,9 +44,12 @@ function update(timestamp) {
     //         scene = 'editor'
     //     }
     // }
+
+    ui.resizeCanvas()
+    ui.getSu()
     
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
+    // canvas.width = window.innerWidth
+    // canvas.height = window.innerHeight
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -53,15 +58,15 @@ function update(timestamp) {
         connectToServer()
     }
 
-    var w = window.innerWidth
-	var h = window.innerHeight
+    // var w = window.innerWidth
+	// var h = window.innerHeight
 
-	let aspect = w / targetSize.x
+	// let aspect = w / targetSize.x
 
-	su = aspect
-	if (su > h / targetSize.y) {
-		su = h / targetSize.y
-	}
+	// su = aspect
+	// if (su > h / targetSize.y) {
+	// 	su = h / targetSize.y
+	// }
 
     leaderboardRefresh -= delta
 
