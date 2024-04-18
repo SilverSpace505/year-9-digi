@@ -66,7 +66,7 @@ function gameTickTrue() {
             }
             
         }
-        if (forward >= 8) {
+        if (forward >= 9) {
             keys["KeyW"] = true
         }
     }
@@ -267,7 +267,7 @@ function gameTick() {
     vtime = Math.ceil(lerp(vtime, time, delta*20)*10000)/10000
     ui.text(50*su, 50*su, 50*su, `TIME: ${Math.round(vtime*100)/100}`)
 
-    menuButton.set(canvas.width - 170*su, (75/2+20)*su, 300*su, 75*su)
+    menuButton.set(canvas.width - 220*su, (75/2+20)*su, 300*su, 75*su)
     menuButton.bgColour = [255, 0, 0, 0.5]
     menuButton.textSize = 52.5*su
 

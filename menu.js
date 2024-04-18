@@ -85,14 +85,16 @@ function menuTick() {
         return
     }
 
+    let offset = 120*su
+
     if (username == null) {
-        ui.text(canvas.width - 70*su - 60*su, 70*su, 27.5*su, "Sign Up to compete!", {align: "right"})
+        ui.text(canvas.width - offset - 60*su, 70*su, 27.5*su, "Sign Up to compete!", {align: "right"})
         ctx.beginPath()
-        ctx.arc(canvas.width - 140*su, 100*su, 50*su, Math.PI*0.3, Math.PI)
-        ctx.moveTo(canvas.width - 110*su, 140*su)
-        ctx.lineTo(canvas.width - 115*su, 160*su)
-        ctx.moveTo(canvas.width - 110*su, 140*su)
-        ctx.lineTo(canvas.width - 130*su, 135*su)
+        ctx.arc(canvas.width - offset - 70*su, 100*su, 50*su, Math.PI*0.3, Math.PI)
+        ctx.moveTo(canvas.width - offset - 40*su, 140*su)
+        ctx.lineTo(canvas.width - offset - 45*su, 160*su)
+        ctx.moveTo(canvas.width - offset - 40*su, 140*su)
+        ctx.lineTo(canvas.width - offset - 60*su, 135*su)
         ctx.lineWidth = 5*su
         ctx.strokeStyle = "white"
         ctx.stroke()
@@ -100,10 +102,10 @@ function menuTick() {
             aPage = "select"
         }
     } else {
-        ui.text(canvas.width - 70*su - 60*su, 70*su, 27.5*su, username, {align: "right"})
+        ui.text(canvas.width - offset - 60*su, 70*su, 27.5*su, username, {align: "right"})
     }
 
-    let hovered = ui.hovered(canvas.width - 70*su, 70*su, 100*su, 100*su)
+    let hovered = ui.hovered(canvas.width - offset, 70*su, 100*su, 100*su)
 
     accountButtonDown -= delta
     if (accountButtonDown <= 0) {
@@ -122,15 +124,15 @@ function menuTick() {
     
     ctx.beginPath()
     ctx.fillStyle = "white"
-    ctx.arc(canvas.width - 70*su, 70*su, 50*su*accountButtonMul, 0, Math.PI*2)
+    ctx.arc(canvas.width - offset, 70*su, 50*su*accountButtonMul, 0, Math.PI*2)
     ctx.fill()
 
     ctx.save()
     ctx.clip()
     ctx.beginPath()
     ctx.fillStyle = "black"
-    ctx.arc(canvas.width - 70*su, 125*su, 50*su, 0, Math.PI*2)
-    ctx.arc(canvas.width - 70*su, 55*su, 30*su, 0, Math.PI*2)
+    ctx.arc(canvas.width - offset, 125*su, 50*su, 0, Math.PI*2)
+    ctx.arc(canvas.width - offset, 55*su, 30*su, 0, Math.PI*2)
     ctx.fill()
 
     ctx.restore()
@@ -138,7 +140,7 @@ function menuTick() {
     ctx.beginPath()
     ctx.strokeStyle = "white"
     ctx.lineWidth = 5*su*accountButtonMul
-    ctx.arc(canvas.width - 70*su, 70*su, 50*su*accountButtonMul, 0, Math.PI*2)
+    ctx.arc(canvas.width - offset, 70*su, 50*su*accountButtonMul, 0, Math.PI*2)
     ctx.stroke()
 
     msgShow -= delta

@@ -1,8 +1,6 @@
-var canvas = document.getElementById("canvas")
-var ctx = canvas.getContext("2d")
-ctx.off = {x: 0, y: 0}
-
+utils.setup()
 utils.setStyles()
+utils.ignoreSafeArea()
 
 var particles = []
 
@@ -126,10 +124,7 @@ function update(timestamp) {
 update()
 
 input.checkInputs = (event) => {
-    if (input.focused) {
-		input.focused.focused = false
-		input.focused = null
-	}
+    input.cistart()
 
     if (scene == "menu" && accountOpen && (aPage == "signup" || aPage == "login")) {
         usernameT.checkFocus(event)
@@ -144,9 +139,7 @@ input.checkInputs = (event) => {
         usernameT.checkFocus(event)
     }  
 
-    if (!input.focused) {
-		input.getInput.blur()
-	}
+    input.ciend()
 }
 
 input.scroll = (x, y) => {
