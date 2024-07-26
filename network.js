@@ -65,7 +65,6 @@ if (idLoaded) {
 }
 
 function saveData() {
-    
     let compressedReplays = []
     for (let replay of account.bestReplays) {
         compressedReplays.push([])
@@ -76,7 +75,7 @@ function saveData() {
     }
     let cAccount = JSON.parse(JSON.stringify(account))
     cAccount.bestReplays = compressedReplays
-    if (JSON.stringify(cAccount).length > 10000) {
+    if (JSON.stringify(cAccount).length > 40000) {
         accountFull = true
         account = JSON.parse(JSON.stringify(oldAccount))
         return
